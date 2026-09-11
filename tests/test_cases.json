@@ -1,0 +1,62 @@
+[
+  {
+    "id": "TC01",
+    "message": "My electricity has been off in Ntinda since 6 a.m. Do you know when it will return?",
+    "expected_category": "outage",
+    "rationale": "Reports an electricity interruption."
+  },
+  {
+    "id": "TC02",
+    "message": "I was charged twice for my August water bill.",
+    "expected_category": "billing",
+    "rationale": "Concerns duplicate billing."
+  },
+  {
+    "id": "TC03",
+    "message": "There is water leaking continuously from the meter outside my house.",
+    "expected_category": "service_request",
+    "rationale": "Requests attention for a meter-area leak."
+  },
+  {
+    "id": "TC04",
+    "message": "I have moved into a new apartment and need electricity connected.",
+    "expected_category": "service_request",
+    "rationale": "Requests a new utility connection."
+  },
+  {
+    "id": "TC05",
+    "message": "I cannot sign in to see my utility account online.",
+    "expected_category": "account",
+    "rationale": "Concerns access to the customer's account."
+  },
+  {
+    "id": "TC06",
+    "message": "Your call-centre agent was rude and no one has replied to my complaint for two weeks.",
+    "expected_category": "complaint",
+    "rationale": "Expresses dissatisfaction with service handling."
+  },
+  {
+    "id": "TC07",
+    "message": "The lights keep flickering every evening, but my neighbours still have power.",
+    "expected_category": "outage",
+    "rationale": "Describes an electricity-supply interruption or instability."
+  },
+  {
+    "id": "TC08",
+    "message": "My bill is high and there is also a leak near the meter. Which department should handle this?",
+    "expected_category": "other",
+    "rationale": "Contains equally important billing and service issues, so it needs clarification rather than a guess."
+  },
+  {
+    "id": "TC09",
+    "message": "Please send the latest statement to my new email address.",
+    "expected_category": "account",
+    "rationale": "Requests an account-detail update and account document."
+  },
+  {
+    "id": "TC10",
+    "message": "Purple kangaroo invoice toaster 99!",
+    "expected_category": "other",
+    "rationale": "Nonsensical input with no interpretable utility issue."
+  }
+]
