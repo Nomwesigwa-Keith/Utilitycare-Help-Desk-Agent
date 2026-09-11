@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import csv
 import json
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -24,7 +23,8 @@ RESULTS_PATH = ROOT / "tests" / "eval_results.csv"
 def main() -> int:
     cases = json.loads(CASES_PATH.read_text(encoding="utf-8"))
     timestamp = datetime.now(timezone.utc).isoformat()
-    def evaluate_case(case: dict[str, str]) -> dict[str, str]:
+    results: list[dict[str, str]] = []
+    for case in cases:
         try:
             result = call_agent(case["message"])
             parsed = result.get("parsed") or {}
@@ -36,7 +36,7 @@ def main() -> int:
             parse_error = f"{type(error).__name__}: {error}"
             raw_response = ""
         passed = actual == case["expected_category"]
-        return {
+        results.append({
             "evaluated_at_utc": timestamp,
             "id": case["id"],
             "message": case["message"],
@@ -45,14 +45,7 @@ def main() -> int:
             "pass": str(passed),
             "parse_error": parse_error,
             "raw_response": raw_response,
-        }
-
-    results: list[dict[str, str]] = []
-    with ThreadPoolExecutor(max_workers=len(cases)) as executor:
-        futures = [executor.submit(evaluate_case, case) for case in cases]
-        for future in as_completed(futures):
-            results.append(future.result())
-    results.sort(key=lambda row: row["id"])
+        })
 
     with RESULTS_PATH.open("w", encoding="utf-8", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=list(results[0]))
