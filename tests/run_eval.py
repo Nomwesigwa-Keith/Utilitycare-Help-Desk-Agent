@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import csv
 import json
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -24,7 +25,11 @@ def main() -> int:
     cases = json.loads(CASES_PATH.read_text(encoding="utf-8"))
     timestamp = datetime.now(timezone.utc).isoformat()
     results: list[dict[str, str]] = []
-    for case in cases:
+    for i, case in enumerate(cases):
+        # Add delay between requests to avoid per-minute quota and service unavailability
+        if i > 0:
+            time.sleep(30)  # Wait 30 seconds between requests
+        
         try:
             result = call_agent(case["message"])
             parsed = result.get("parsed") or {}
