@@ -1,4 +1,13 @@
 ## Project Charter
+
+## Run the Gemini triage baseline
+
+1. Create a virtual environment and install `requirements.txt`.
+2. Copy `.env.example` to `.env`, then add a valid `GEMINI_API_KEY`. Do not commit `.env`.
+3. Start the API with `uvicorn src.main:app --reload`.
+4. Send a POST request to `/triage` with `{"message":"My bill is too high"}`.
+
+The model must return a JSON object matching `prompts/prompt_spec.md`. The application validates that JSON before returning it. Run `python -m tests.run_eval` to create `tests/eval_results.csv`; it records every model result or API error, so do not treat a quota failure as a classification result.
 ## 1. Problem Statement
 UtilityCare is a utility company for electricity and water services whose customer help desk currently handles service requests manually over phone and walk-in. Agents spend significant time searching printed manuals and past tickets to diagnose common issues such as power outages, suspected meter faults, water leaks and billing queries. There is no consistent way to check whether an outage is already known before creating a duplicate ticket. This causes slow response times, inconsistent troubleshooting advice, and duplicate tickets.
 
