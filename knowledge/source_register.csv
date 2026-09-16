@@ -1,0 +1,31 @@
+Doc ID,Title,Category,Date Created,Author,File Path
+KB-001,What to do during a power outage,power_outage,2026-09-14,Group B,knowledge/corpus/KB-001.md
+KB-002,Reporting a power outage,power_outage,2026-09-14,Group B,knowledge/corpus/KB-002.md
+KB-003,Flickering lights troubleshooting,power_outage,2026-09-14,Group B,knowledge/corpus/KB-003.md
+KB-004,Power outage after a storm,power_outage,2026-09-14,Group B,knowledge/corpus/KB-004.md
+KB-005,Partial power loss in the home,power_outage,2026-09-14,Group B,knowledge/corpus/KB-005.md
+KB-006,Frequent short power interruptions,power_outage,2026-09-14,Group B,knowledge/corpus/KB-006.md
+KB-007,Suspected meter running fast,meter_fault,2026-09-14,Group B,knowledge/corpus/KB-007.md
+KB-008,Meter display not working,meter_fault,2026-09-14,Group B,knowledge/corpus/KB-008.md
+KB-009,Meter reading looks abnormally low,meter_fault,2026-09-14,Group B,knowledge/corpus/KB-009.md
+KB-010,Physical damage to meter,meter_fault,2026-09-14,Group B,knowledge/corpus/KB-010.md
+KB-011,Requesting a meter inspection,meter_fault,2026-09-14,Group B,knowledge/corpus/KB-011.md
+KB-012,Understanding your meter reading,meter_fault,2026-09-14,Group B,knowledge/corpus/KB-012.md
+KB-013,Reporting a visible water leak,water_leak,2026-09-14,Group B,knowledge/corpus/KB-013.md
+KB-014,Dripping tap troubleshooting,water_leak,2026-09-14,Group B,knowledge/corpus/KB-014.md
+KB-015,Underground pipe leak signs,water_leak,2026-09-14,Group B,knowledge/corpus/KB-015.md
+KB-016,Low water pressure due to leak,water_leak,2026-09-14,Group B,knowledge/corpus/KB-016.md
+KB-017,Water leak near meter box,water_leak,2026-09-14,Group B,knowledge/corpus/KB-017.md
+KB-018,Water leak causing high bill,water_leak,2026-09-14,Group B,knowledge/corpus/KB-018.md
+KB-019,Understanding your monthly bill,billing_query,2026-09-14,Group B,knowledge/corpus/KB-019.md
+KB-020,Disputing a billing charge,billing_query,2026-09-14,Group B,knowledge/corpus/KB-020.md
+KB-021,Bill higher than usual,billing_query,2026-09-14,Group B,knowledge/corpus/KB-021.md
+KB-022,Requesting a payment plan,billing_query,2026-09-14,Group B,knowledge/corpus/KB-022.md
+KB-023,Duplicate charge on account,billing_query,2026-09-14,Group B,knowledge/corpus/KB-023.md
+KB-024,Estimated vs actual billing,billing_query,2026-09-14,Group B,knowledge/corpus/KB-024.md
+KB-025,Updating contact information,other,2026-09-14,Group B,knowledge/corpus/KB-025.md
+KB-026,Requesting a new service connection,other,2026-09-14,Group B,knowledge/corpus/KB-026.md
+KB-027,Transferring service to a new address,other,2026-09-14,Group B,knowledge/corpus/KB-027.md
+KB-028,General service request categories,other,2026-09-14,Group B,knowledge/corpus/KB-028.md
+KB-029,Contacting UtiliCare customer support,other,2026-09-14,Group B,knowledge/corpus/KB-029.md
+KB-030,Understanding planned maintenance notices,other,2026-09-14,Group B,knowledge/corpus/KB-030.md
