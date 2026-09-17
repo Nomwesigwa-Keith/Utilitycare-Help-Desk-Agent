@@ -1,49 +1,53 @@
-## Project Charter
+# UtiliCare Help Desk Triage Agent
 
-## Run the Gemini triage baseline
+UtiliCare is a bounded AI-assisted help-desk triage prototype for electricity and water service requests. A human help-desk agent remains responsible for ticket submission, routing, escalation, closure, billing changes, and infrastructure actions.
 
-1. Create a virtual environment and install `requirements.txt`.
-2. Copy `.env.example` to `.env`, then add a valid `GEMINI_API_KEY`. Do not commit `.env`.
-3. Start the API with `uvicorn src.main:app --reload`.
-4. Send a POST request to `/triage` with `{"message":"My bill is too high"}`.
+## Current project stage
 
-The model must return a JSON object matching `prompts/prompt_spec.md`. The application validates that JSON before returning it. Run `python -m tests.run_eval` to create `tests/eval_results.csv`; it records every model result or API error, so do not treat a quota failure as a classification result.
-## 1. Problem Statement
-UtilityCare is a utility company for electricity and water services whose customer help desk currently handles service requests manually over phone and walk-in. Agents spend significant time searching printed manuals and past tickets to diagnose common issues such as power outages, suspected meter faults, water leaks and billing queries. There is no consistent way to check whether an outage is already known before creating a duplicate ticket. This causes slow response times, inconsistent troubleshooting advice, and duplicate tickets.
+Weeks 1 and 2 are complete. Week 3 adds a controlled retrieval-augmented generation (RAG) baseline: corpus validation, metadata-preserving chunking, deterministic retrieval, source-grounded context, and retrieval traces. The final evaluation trace must be generated locally before reporting results.
 
-## 2. Target User 
-Primary user: UtilityCare customer service agent triaging incoming customer issues.
-Secondary user: the customer submitting the issue.
+## Repository structure
 
-## 3. AI Value Proposition
-AI is used for reasoning, retrieval and planning: understanding the customer's free-text issue, retrieving grounded troubleshooting guidance from an approved knowledge base, deciding which of a small set of approved tools to use and drafting a structured ticket. AI does not make final routing or closure decisions autonomously.
+```text
+docs/
+  requirements/       Week 1 charter, stories, boundary matrix; Week 2 model note
+  architecture/       System and RAG diagrams
+  weekly-reports/     One factual progress report per week
+  evaluation/         Evaluation methods, datasets, and analysis documents
+prompts/              Versioned prompt specifications and change history
+knowledge/            Controlled corpus and source/provenance register
+src/                  Application source code only
+tests/                Executable tests and evaluation input cases only
+evidence/
+  traces/             Generated evaluation and runtime traces
+  screenshots/        Demonstration screenshots
+  demo/               Demonstration assets
+```
 
-## 4. Minimum Proposal Statement
-Our system helps a UtilityCare help-desk agent complete first-line triage of customer service requests. AI is used for reasoning, retrieval and planning. Deterministic software remains responsible for authentication, ticket schema validation, routing rules and escalation thresholds. The agent may use approved tools such knowledge base search but may not perform remote infrastructure control, automatic disconnection/reconnection, billing changes or autonomous ticket submission. We will build and evaluate the system using a synthetic knowledge base of public style help content and outage records.
+Do not put generated results in `tests/`, source code in `docs/`, or secrets in the repository. Place each new item in the folder that owns its purpose.
 
-## 5. Scope
-In scope, Understanding and classifying a customer's service issue from free text.
-Retrieving troubleshooting guidance from the created knowledge base.
-Checking a mock outage/status tool for the customer's area.
-Drafting a structured support ticket (category, priority, summary, next action).
-Out of scope
-Any remote control of infrastructure i.e. disconnection and reconnection.
-Billing, refunds or any financial transaction.
-Real customer data.
-Autonomous ticket closure or escalation without human confirmation.
+## Week 1 and Week 2 evidence
 
-## 6. Assumptions
-The team will author a small, synthetic knowledge base of troubleshooting/FAQ-style content.
-The outage/status tool and ticketing system are simulated services built by the team, not connections to a real utility.
-One foundation model will be integrated through the application.
+| Week | Required evidence | Location |
+| --- | --- | --- |
+| 1 | Project charter, user stories, AI boundary matrix | `docs/requirements/` |
+| 1 | Initial architecture diagram | `docs/architecture/Architectural_Diagram.docx` |
+| 1–2 | Progress reports | `docs/weekly-reports/` |
+| 2 | Model selection note | `docs/requirements/Model_Selection_Note.docx` |
+| 2 | Prompt specification and version history | `prompts/` |
+| 2 | Ten prompt-evaluation cases and results | `tests/test_cases.json`, `evidence/traces/week2_eval_results.csv` |
+| 3 preparation | Controlled corpus and provenance register | `knowledge/corpus/`, `knowledge/source_register.csv` |
 
-## 7. Constraints
-No confidential, personal or institutional data may be used or sent to external AI services.
-High-impact actions such as ticket routing, escalation and closure must stay behind human approval.
-Evidence trails: GitHub commits and ClickUp tasks.
+## Run the Week 2 baseline
 
-## 8. Success Criteria
-A user can describe a service issue and receive grounded, sourced troubleshooting guidance.
-The agent correctly checks outage status before recommending escalation.
-A correctly structured ticket draft is produced and requires explicit human approval to submit.
-By Week 8: 30+ evaluation scenarios pass acceptable thresholds for groundedness, tool selection and safety (no unauthorized actions).
+1. Create and activate a Python virtual environment.
+2. Install dependencies with `pip install -r requirements.txt`.
+3. Copy `.env.example` to `.env` and supply `GEMINI_API_KEY`. Never commit `.env`.
+4. Start the API with `uvicorn src.main:app --reload`.
+5. Send `POST /triage` with `{"message":"My bill is too high"}`.
+
+Run `python -m tests.run_eval` for the Week 2 prompt evaluation. It writes a timestamped result file to `evidence/traces/`; API or quota errors are recorded as failures and must not be reported as model classifications. Run `python -m tests.run_rag_eval` for the offline Week 3 retrieval evaluation.
+
+## Week 3 placement rules
+
+Place the RAG implementation in `src/`, controlled source files in `knowledge/corpus/`, provenance in `knowledge/source_register.csv`, RAG questions in `tests/`, result traces in `evidence/traces/`, the RAG diagram in `docs/architecture/`, and the evaluation analysis plus Week 3 report in `docs/evaluation/` and `docs/weekly-reports/` respectively.

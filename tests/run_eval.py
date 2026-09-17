@@ -1,7 +1,7 @@
 """Run the prompt-evaluation cases against the configured Gemini model.
 
 Usage: python -m tests.run_eval
-Writes tests/eval_results.csv and exits non-zero if any case fails or the
+Writes evidence/traces/week2_eval_results.csv and exits non-zero if any case fails or the
 model returns an unusable response.
 """
 
@@ -18,7 +18,7 @@ from src.agent import call_agent
 
 ROOT = Path(__file__).resolve().parents[1]
 CASES_PATH = ROOT / "tests" / "test_cases.json"
-RESULTS_PATH = ROOT / "tests" / "eval_results.csv"
+RESULTS_PATH = ROOT / "evidence" / "traces" / "week2_eval_results.csv"
 
 
 def main() -> int:
@@ -52,6 +52,7 @@ def main() -> int:
             "raw_response": raw_response,
         })
 
+    RESULTS_PATH.parent.mkdir(parents=True, exist_ok=True)
     with RESULTS_PATH.open("w", encoding="utf-8", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=list(results[0]))
         writer.writeheader()

@@ -1,0 +1,16 @@
+evaluated_at_utc,id,type,question,expected_status,actual_status,expected_doc_id,retrieved_doc_ids,pass
+2026-09-17T14:13:14.022801+00:00,RAG-01,answerable,What should I do if power is out on my street?,grounded,grounded,KB-001,KB-001;KB-002;KB-004,True
+2026-09-17T14:13:14.023161+00:00,RAG-02,answerable,How do I report a power outage in my area?,grounded,grounded,KB-002,KB-002;KB-001;KB-006,True
+2026-09-17T14:13:14.023496+00:00,RAG-03,answerable,My lights flicker throughout the whole house every evening.,grounded,grounded,KB-003,KB-003;KB-005;KB-016,True
+2026-09-17T14:13:14.023822+00:00,RAG-04,answerable,What should I do near a fallen power line after a storm?,grounded,grounded,KB-004,KB-004;KB-001;KB-002,True
+2026-09-17T14:13:14.024134+00:00,RAG-05,answerable,Only some rooms have electricity. Should I check my breaker?,grounded,grounded,KB-005,KB-005;KB-001;KB-003,True
+2026-09-17T14:13:14.024472+00:00,RAG-06,answerable,My meter display is blank but the property has electricity.,grounded,grounded,KB-008,KB-008;KB-007;KB-009,True
+2026-09-17T14:13:14.024804+00:00,RAG-07,answerable,There is water pooling around the meter box.,grounded,grounded,KB-017,KB-017;KB-007;KB-008,True
+2026-09-17T14:13:14.025193+00:00,RAG-08,answerable,Why is there a sudden high water bill and a running-water sound?,grounded,grounded,KB-018,KB-018;KB-017;KB-013,True
+2026-09-17T14:13:14.025460+00:00,RAG-09,answerable,I was charged twice for the same bill.,grounded,grounded,KB-023,KB-023;KB-019;KB-020,True
+2026-09-17T14:13:14.025723+00:00,RAG-10,answerable,What is required for a new electricity connection?,grounded,grounded,KB-026,KB-026;KB-027;KB-001,True
+2026-09-17T14:13:14.025991+00:00,RAG-11,partially_answerable,My power outage started in Ntinda. When will it be restored?,grounded,grounded,KB-002,KB-002;KB-001;KB-004,True
+2026-09-17T14:13:14.026299+00:00,RAG-12,partially_answerable,What exact rate caused my bill to increase this month?,grounded,grounded,KB-021,KB-021;KB-024;KB-019,True
+2026-09-17T14:13:14.026621+00:00,RAG-13,partially_answerable,Can you confirm whether the planned maintenance outage is active in my area?,grounded,grounded,KB-030,KB-002;KB-030;KB-001,True
+2026-09-17T14:13:14.027022+00:00,RAG-14,unanswerable,Who won the national football championship yesterday?,insufficient_evidence,insufficient_evidence,,,True
+2026-09-17T14:13:14.027377+00:00,RAG-15,unanswerable,What is today's weather forecast for Kampala?,insufficient_evidence,insufficient_evidence,,,True

@@ -1,0 +1,17 @@
+[
+  {"id":"RAG-01","type":"answerable","question":"What should I do if power is out on my street?","expected_status":"grounded","expected_doc_id":"KB-001"},
+  {"id":"RAG-02","type":"answerable","question":"How do I report a power outage in my area?","expected_status":"grounded","expected_doc_id":"KB-002"},
+  {"id":"RAG-03","type":"answerable","question":"My lights flicker throughout the whole house every evening.","expected_status":"grounded","expected_doc_id":"KB-003"},
+  {"id":"RAG-04","type":"answerable","question":"What should I do near a fallen power line after a storm?","expected_status":"grounded","expected_doc_id":"KB-004"},
+  {"id":"RAG-05","type":"answerable","question":"Only some rooms have electricity. Should I check my breaker?","expected_status":"grounded","expected_doc_id":"KB-005"},
+  {"id":"RAG-06","type":"answerable","question":"My meter display is blank but the property has electricity.","expected_status":"grounded","expected_doc_id":"KB-008"},
+  {"id":"RAG-07","type":"answerable","question":"There is water pooling around the meter box.","expected_status":"grounded","expected_doc_id":"KB-017"},
+  {"id":"RAG-08","type":"answerable","question":"Why is there a sudden high water bill and a running-water sound?","expected_status":"grounded","expected_doc_id":"KB-018"},
+  {"id":"RAG-09","type":"answerable","question":"I was charged twice for the same bill.","expected_status":"grounded","expected_doc_id":"KB-023"},
+  {"id":"RAG-10","type":"answerable","question":"What is required for a new electricity connection?","expected_status":"grounded","expected_doc_id":"KB-026"},
+  {"id":"RAG-11","type":"partially_answerable","question":"My power outage started in Ntinda. When will it be restored?","expected_status":"grounded","expected_doc_id":"KB-002"},
+  {"id":"RAG-12","type":"partially_answerable","question":"What exact rate caused my bill to increase this month?","expected_status":"grounded","expected_doc_id":"KB-021"},
+  {"id":"RAG-13","type":"partially_answerable","question":"Can you confirm whether the planned maintenance outage is active in my area?","expected_status":"grounded","expected_doc_id":"KB-030"},
+  {"id":"RAG-14","type":"unanswerable","question":"Who won the national football championship yesterday?","expected_status":"insufficient_evidence","expected_doc_id":null},
+  {"id":"RAG-15","type":"unanswerable","question":"What is today's weather forecast for Kampala?","expected_status":"insufficient_evidence","expected_doc_id":null}
+]
