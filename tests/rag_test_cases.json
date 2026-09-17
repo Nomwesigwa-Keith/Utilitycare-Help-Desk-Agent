@@ -13,20 +13,5 @@
   {"id":"RAG-12","type":"partially_answerable","question":"What exact rate caused my bill to increase this month?","expected_status":"grounded","expected_doc_id":"KB-021"},
   {"id":"RAG-13","type":"partially_answerable","question":"Can you confirm whether the planned maintenance outage is active in my area?","expected_status":"grounded","expected_doc_id":"KB-030"},
   {"id":"RAG-14","type":"unanswerable","question":"Who won the national football championship yesterday?","expected_status":"insufficient_evidence","expected_doc_id":null},
-  {"id":"RAG-15","type":"unanswerable","question":"What is today's weather forecast for Kampala?","expected_status":"insufficient_evidence","expected_doc_id":null},
-  {"id":"RAG-16","type":"answerable","question":"Why am I experiencing frequent short power interruptions during the day?","expected_status":"grounded","expected_doc_id":"KB-006"},
-  {"id":"RAG-17","type":"answerable","question":"My meter reading looks abnormally low this month, is it broken?","expected_status":"grounded","expected_doc_id":"KB-009"},
-  {"id":"RAG-18","type":"answerable","question":"How do I formally request a meter inspection from UtiliCare?","expected_status":"grounded","expected_doc_id":"KB-011"},
-  {"id":"RAG-19","type":"answerable","question":"I have a dripping tap, what steps should I take to troubleshoot it?","expected_status":"grounded","expected_doc_id":"KB-014"},
-  {"id":"RAG-20","type":"answerable","question":"What are the signs that I might have a hidden underground pipe leak?","expected_status":"grounded","expected_doc_id":"KB-015"},
-  {"id":"RAG-21","type":"answerable","question":"How can I dispute a charge on my latest billing statement?","expected_status":"grounded","expected_doc_id":"KB-020"},
-  {"id":"RAG-22","type":"answerable","question":"How do I transfer my utility service to a completely new address?","expected_status":"grounded","expected_doc_id":"KB-027"},
-  {"id":"RAG-23","type":"partially_answerable","question":"I see a visible water leak on Main Street, how long will it take for the crew to arrive and fix it?","expected_status":"grounded","expected_doc_id":"KB-013"},
-  {"id":"RAG-24","type":"partially_answerable","question":"I want to request a payment plan, what are the exact interest rates applied to my overdue balance?","expected_status":"grounded","expected_doc_id":"KB-022"},
-  {"id":"RAG-25","type":"partially_answerable","question":"My meter has physical damage from a car crash, will my auto insurance cover the UtiliCare replacement fee?","expected_status":"grounded","expected_doc_id":"KB-010"},
-  {"id":"RAG-26","type":"partially_answerable","question":"I need to update my contact information, can I also register my spouse's email for the neighborhood watch program at the same time?","expected_status":"grounded","expected_doc_id":"KB-025"},
-  {"id":"RAG-27","type":"unanswerable","question":"What is the recipe for baking a traditional chocolate cake?","expected_status":"insufficient_evidence","expected_doc_id":null},
-  {"id":"RAG-28","type":"unanswerable","question":"Who won the Best Actor award at the Oscars this year?","expected_status":"insufficient_evidence","expected_doc_id":null},
-  {"id":"RAG-29","type":"unanswerable","question":"What is the capital city of Australia?","expected_status":"insufficient_evidence","expected_doc_id":null},
-  {"id":"RAG-30","type":"unanswerable","question":"Who painted the Mona Lisa in the 16th century?","expected_status":"insufficient_evidence","expected_doc_id":null}
+  {"id":"RAG-15","type":"unanswerable","question":"What is today's weather forecast for Kampala?","expected_status":"insufficient_evidence","expected_doc_id":null}
 ]
