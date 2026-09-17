@@ -1,16 +1,31 @@
 evaluated_at_utc,id,type,question,expected_status,actual_status,expected_doc_id,retrieved_doc_ids,pass
-2026-09-17T14:13:14.022801+00:00,RAG-01,answerable,What should I do if power is out on my street?,grounded,grounded,KB-001,KB-001;KB-002;KB-004,True
-2026-09-17T14:13:14.023161+00:00,RAG-02,answerable,How do I report a power outage in my area?,grounded,grounded,KB-002,KB-002;KB-001;KB-006,True
-2026-09-17T14:13:14.023496+00:00,RAG-03,answerable,My lights flicker throughout the whole house every evening.,grounded,grounded,KB-003,KB-003;KB-005;KB-016,True
-2026-09-17T14:13:14.023822+00:00,RAG-04,answerable,What should I do near a fallen power line after a storm?,grounded,grounded,KB-004,KB-004;KB-001;KB-002,True
-2026-09-17T14:13:14.024134+00:00,RAG-05,answerable,Only some rooms have electricity. Should I check my breaker?,grounded,grounded,KB-005,KB-005;KB-001;KB-003,True
-2026-09-17T14:13:14.024472+00:00,RAG-06,answerable,My meter display is blank but the property has electricity.,grounded,grounded,KB-008,KB-008;KB-007;KB-009,True
-2026-09-17T14:13:14.024804+00:00,RAG-07,answerable,There is water pooling around the meter box.,grounded,grounded,KB-017,KB-017;KB-007;KB-008,True
-2026-09-17T14:13:14.025193+00:00,RAG-08,answerable,Why is there a sudden high water bill and a running-water sound?,grounded,grounded,KB-018,KB-018;KB-017;KB-013,True
-2026-09-17T14:13:14.025460+00:00,RAG-09,answerable,I was charged twice for the same bill.,grounded,grounded,KB-023,KB-023;KB-019;KB-020,True
-2026-09-17T14:13:14.025723+00:00,RAG-10,answerable,What is required for a new electricity connection?,grounded,grounded,KB-026,KB-026;KB-027;KB-001,True
-2026-09-17T14:13:14.025991+00:00,RAG-11,partially_answerable,My power outage started in Ntinda. When will it be restored?,grounded,grounded,KB-002,KB-002;KB-001;KB-004,True
-2026-09-17T14:13:14.026299+00:00,RAG-12,partially_answerable,What exact rate caused my bill to increase this month?,grounded,grounded,KB-021,KB-021;KB-024;KB-019,True
-2026-09-17T14:13:14.026621+00:00,RAG-13,partially_answerable,Can you confirm whether the planned maintenance outage is active in my area?,grounded,grounded,KB-030,KB-002;KB-030;KB-001,True
-2026-09-17T14:13:14.027022+00:00,RAG-14,unanswerable,Who won the national football championship yesterday?,insufficient_evidence,insufficient_evidence,,,True
-2026-09-17T14:13:14.027377+00:00,RAG-15,unanswerable,What is today's weather forecast for Kampala?,insufficient_evidence,insufficient_evidence,,,True
+2026-09-17T21:49:43.035895+00:00,RAG-01,answerable,What should I do if power is out on my street?,grounded,grounded,KB-001,KB-001;KB-002;KB-004,True
+2026-09-17T21:49:43.035981+00:00,RAG-02,answerable,How do I report a power outage in my area?,grounded,grounded,KB-002,KB-002;KB-001;KB-006,True
+2026-09-17T21:49:43.036055+00:00,RAG-03,answerable,My lights flicker throughout the whole house every evening.,grounded,grounded,KB-003,KB-003;KB-005;KB-016,True
+2026-09-17T21:49:43.036126+00:00,RAG-04,answerable,What should I do near a fallen power line after a storm?,grounded,grounded,KB-004,KB-004;KB-001;KB-002,True
+2026-09-17T21:49:43.036194+00:00,RAG-05,answerable,Only some rooms have electricity. Should I check my breaker?,grounded,grounded,KB-005,KB-005;KB-001;KB-003,True
+2026-09-17T21:49:43.036267+00:00,RAG-06,answerable,My meter display is blank but the property has electricity.,grounded,grounded,KB-008,KB-008;KB-007;KB-009,True
+2026-09-17T21:49:43.036379+00:00,RAG-07,answerable,There is water pooling around the meter box.,grounded,grounded,KB-017,KB-017;KB-007;KB-008,True
+2026-09-17T21:49:43.036458+00:00,RAG-08,answerable,Why is there a sudden high water bill and a running-water sound?,grounded,grounded,KB-018,KB-018;KB-017;KB-013,True
+2026-09-17T21:49:43.036513+00:00,RAG-09,answerable,I was charged twice for the same bill.,grounded,grounded,KB-023,KB-023;KB-019;KB-020,True
+2026-09-17T21:49:43.036570+00:00,RAG-10,answerable,What is required for a new electricity connection?,grounded,grounded,KB-026,KB-026;KB-027;KB-001,True
+2026-09-17T21:49:43.036627+00:00,RAG-11,partially_answerable,My power outage started in Ntinda. When will it be restored?,grounded,grounded,KB-002,KB-002;KB-001;KB-004,True
+2026-09-17T21:49:43.036693+00:00,RAG-12,partially_answerable,What exact rate caused my bill to increase this month?,grounded,grounded,KB-021,KB-021;KB-024;KB-019,True
+2026-09-17T21:49:43.036760+00:00,RAG-13,partially_answerable,Can you confirm whether the planned maintenance outage is active in my area?,grounded,grounded,KB-030,KB-002;KB-030;KB-001,True
+2026-09-17T21:49:43.036808+00:00,RAG-14,unanswerable,Who won the national football championship yesterday?,insufficient_evidence,insufficient_evidence,,,True
+2026-09-17T21:49:43.036851+00:00,RAG-15,unanswerable,What is today's weather forecast for Kampala?,insufficient_evidence,insufficient_evidence,,,True
+2026-09-17T21:49:43.036924+00:00,RAG-16,answerable,Why am I experiencing frequent short power interruptions during the day?,grounded,grounded,KB-006,KB-006;KB-001;KB-002,True
+2026-09-17T21:49:43.036995+00:00,RAG-17,answerable,"My meter reading looks abnormally low this month, is it broken?",grounded,grounded,KB-009,KB-009;KB-012;KB-007,True
+2026-09-17T21:49:43.037066+00:00,RAG-18,answerable,How do I formally request a meter inspection from UtiliCare?,grounded,grounded,KB-011,KB-011;KB-007;KB-008,True
+2026-09-17T21:49:43.037142+00:00,RAG-19,answerable,"I have a dripping tap, what steps should I take to troubleshoot it?",grounded,grounded,KB-014,KB-014;KB-004,True
+2026-09-17T21:49:43.037214+00:00,RAG-20,answerable,What are the signs that I might have a hidden underground pipe leak?,grounded,grounded,KB-015,KB-015;KB-018;KB-013,True
+2026-09-17T21:49:43.037275+00:00,RAG-21,answerable,How can I dispute a charge on my latest billing statement?,grounded,grounded,KB-020,KB-019;KB-020;KB-023,True
+2026-09-17T21:49:43.037336+00:00,RAG-22,answerable,How do I transfer my utility service to a completely new address?,grounded,grounded,KB-027,KB-027;KB-026;KB-025,True
+2026-09-17T21:49:43.037426+00:00,RAG-23,partially_answerable,"I see a visible water leak on Main Street, how long will it take for the crew to arrive and fix it?",grounded,grounded,KB-013,KB-013;KB-018;KB-016,True
+2026-09-17T21:49:43.037507+00:00,RAG-24,partially_answerable,"I want to request a payment plan, what are the exact interest rates applied to my overdue balance?",grounded,grounded,KB-022,KB-022;KB-011;KB-012,True
+2026-09-17T21:49:43.037626+00:00,RAG-25,partially_answerable,"My meter has physical damage from a car crash, will my auto insurance cover the UtiliCare replacement fee?",grounded,grounded,KB-010,KB-010;KB-008;KB-007,True
+2026-09-17T21:49:43.037723+00:00,RAG-26,partially_answerable,"I need to update my contact information, can I also register my spouse's email for the neighborhood watch program at the same time?",grounded,grounded,KB-025,KB-025;KB-028;KB-002,True
+2026-09-17T21:49:43.037770+00:00,RAG-27,unanswerable,What is the recipe for baking a traditional chocolate cake?,insufficient_evidence,insufficient_evidence,,,True
+2026-09-17T21:49:43.037822+00:00,RAG-28,unanswerable,Who won the Best Actor award at the Oscars this year?,insufficient_evidence,insufficient_evidence,,,True
+2026-09-17T21:49:43.037858+00:00,RAG-29,unanswerable,What is the capital city of Australia?,insufficient_evidence,insufficient_evidence,,,True
+2026-09-17T21:49:43.037902+00:00,RAG-30,unanswerable,Who painted the Mona Lisa in the 16th century?,insufficient_evidence,insufficient_evidence,,,True
