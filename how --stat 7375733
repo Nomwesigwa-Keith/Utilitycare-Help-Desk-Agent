@@ -1,0 +1,37 @@
+[33mcommit 16ed9fe276ea432c406838d0bb39259690d756ac[m
+Author: UmarMubiru <umarmubiru330@gmail.com>
+Date:   Wed Sep 23 17:00:05 2026 +0300
+
+    Week 4: Tool implementations and working demo (Keith + Mubiru)
+    
+    This commit implements the tool calling functionality for the UtiliCare Help-Desk Triage Agent.
+    
+    Completed (Keith Nomwesigwa + Mubiru Umar):
+    - Tool Catalogue reviewed from docs/requirements/Tool_Catalogue_and_Schemas.docx
+    - Implemented get_outage_status tool (read-only retrieval, no approval needed)
+    - Implemented draft_ticket tool (simulated side effect, status locked to pending_approval)
+    - Created tool orchestration layer (src/orchestrator.py)
+    - Integrated tools into agent.py with v3.0 prompt (tool calling support)
+    - Created working demo (tests/test_tools.py) - 10/10 tests passed
+    
+    Files added:
+    - src/tools.py - Tool implementations (get_outage_status, draft_ticket)
+    - src/orchestrator.py - Tool calling orchestration layer
+    - tests/test_tools.py - Working demo tests
+    
+    Files modified:
+    - src/agent.py - Updated to v3.0 prompt with tool calling support
+    
+    Remaining tasks for other team members:
+    - Khot Adet Majoung: Failure/authorization test evidence (tests/test_tool_failures.py)
+    - Arok John Mayen: Updated architecture diagram (docs/architecture/Week4_Tools_and_Function_Calling_Diagram.md)
+    - Nankunda Lilian: Week 4 progress report (docs/weekly-reports/Week4_Progress_Report.docx)
+    
+    To verify the working demo:
+      python -m tests.test_tools
+
+ src/agent.py        |  87 [32m+++++++++++++++++[m[31m---[m
+ src/orchestrator.py | 179 [32m+++++++++++++++++++++++++++++++++++++++++[m
+ src/tools.py        | 224 [32m++++++++++++++++++++++++++++++++++++++++++++++++++++[m
+ tests/test_tools.py | 150 [32m+++++++++++++++++++++++++++++++++++[m
+ 4 files changed, 628 insertions(+), 12 deletions(-)
