@@ -1,0 +1,43 @@
+{
+  "trace_id": "run2_ambiguous_message",
+  "input_message": "something is wrong with my service, not sure what exactly",
+  "note": "Deliberately vague message with no clear category signal, to exercise a different path than trace 1's clean outage report -- expected to land on 'other'/low confidence and possibly clarification_needed, but the real model's actual behaviour is what gets recorded here, not an assumption.",
+  "final_state": {
+    "customer_message": "something is wrong with my service, not sure what exactly",
+    "classification_result": null,
+    "grounding_status": null,
+    "retrieved_sources": [
+      {
+        "doc_id": "KB-020",
+        "title": "Disputing a billing charge",
+        "category": "billing_query"
+      },
+      {
+        "doc_id": "KB-028",
+        "title": "General service request categories",
+        "category": "other"
+      },
+      {
+        "doc_id": "KB-008",
+        "title": "Meter display not working",
+        "category": "meter_fault"
+      }
+    ],
+    "tool_calls_made": [],
+    "tool_results": [],
+    "iteration_count": 1,
+    "requires_clarification": false,
+    "clarifying_question": null,
+    "stop_reason": "model_parsing_failure",
+    "trace": [
+      {
+        "iteration": 1,
+        "raw_text": "{\n  \"category\": \"other\",\n  \"confidence\": \"low\",\n  \"summary\": \"The",
+        "parsed": null,
+        "parse_error": "invalid JSON: Unterminated string starting at: line 4 column 14 (char 61)",
+        "finish_reason": "MAX_TOKENS",
+        "tool_results": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "trace_id": "run3_model_parsing_failure",
+  "input_message": "My power has been out since this morning, when will it be back?",
+  "note": "Naturally-occurring failure/recovery case (not synthetic/forced). The live Gemini call returned finish_reason=MAX_TOKENS after only 22 visible output tokens despite max_output_tokens=600 in src/agent.py, truncating the JSON response mid-string. run_bounded_agent() correctly caught the unparseable response, set stop_reason='model_parsing_failure' per Agent Task Contract section 5.2, and returned cleanly with full state captured -- no crash, no infinite loop. Likely cause: 'models/gemini-flash-latest' may have drifted to a newer underlying model that consumes hidden reasoning/thinking tokens from the same output budget; this risks affecting other calls beyond this specific test and should be investigated by whoever owns src/agent.py (see recommendation in the narrative evidence doc).",
+  "final_state": {
+    "customer_message": "My power has been out since this morning, when will it be back?",
+    "classification_result": null,
+    "grounding_status": null,
+    "retrieved_sources": [
+      {
+        "doc_id": "KB-001",
+        "title": "What to do during a power outage",
+        "category": "power_outage"
+      },
+      {
+        "doc_id": "KB-005",
+        "title": "Partial power loss in the home",
+        "category": "power_outage"
+      },
+      {
+        "doc_id": "KB-006",
+        "title": "Frequent short power interruptions",
+        "category": "power_outage"
+      }
+    ],
+    "tool_calls_made": [],
+    "tool_results": [],
+    "iteration_count": 1,
+    "requires_clarification": false,
+    "clarifying_question": null,
+    "stop_reason": "model_parsing_failure",
+    "trace": [
+      {
+        "iteration": 1,
+        "raw_text": "{\n  \"category\": \"outage\",\n  \"confidence\": \"high\",\n  \"",
+        "parsed": null,
+        "parse_error": "invalid JSON: Unterminated string starting at: line 4 column 3 (char 52)",
+        "finish_reason": "MAX_TOKENS",
+        "tool_results": []
+      }
+    ]
+  }
+}
