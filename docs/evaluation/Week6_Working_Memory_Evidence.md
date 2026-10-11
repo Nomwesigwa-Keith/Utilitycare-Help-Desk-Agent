@@ -41,8 +41,22 @@ context while keeping the current request as separate evidence. This test passed
 
 ## Commands and results
 
-The following commands were run using Python 3.12.10 from the project virtual
-environment:
+The focused Week 6 command was also independently run from the project's
+`.venv312` environment:
+
+```text
+python -m pytest tests/test_week6_working_memory.py -v
+```
+
+Observed output:
+
+```text
+collected 3 items
+3 passed, 1 warning in 1.94s
+```
+
+The complete verification set was run using Python 3.12.10 from a project
+virtual environment:
 
 ```text
 .\.venv\Scripts\python.exe -m pytest tests/test_week6_working_memory.py -v
