@@ -4,7 +4,10 @@ Week 5 bounded agent workflow for the UtilityCare Triage Agent.
 Implements Sense -> Plan -> Act -> Observe -> Stop/Re-plan,
 per docs/requirements/Agent_Task_Contract_for_week_5.docx
 """
+from datetime import datetime, timezone
+
 from src.agent import call_agent
+from src.memory import find_similar, save_case
 
 MAX_ITERATIONS = 3
 
@@ -25,6 +28,8 @@ def create_initial_state(customer_message: str) -> dict:
         "requires_clarification": False,
         "clarifying_question": None,
         "stop_reason": None,
+        "memory_context": [],
+        "memory_trace": [],
     }
 
 
@@ -126,6 +131,62 @@ def run_bounded_agent(customer_message: str) -> dict:
             [{"tool_name": r.get("tool_name")} for r in tool_results]
         )
 
+        # Memory is read after the model call and never fed back into it.
+        # Tool arguments are the only source for the exact lookup key.
+        tool_calls = parsed.get("tool_calls", []) if parsed else []
+        memory_trace_start = len(state["memory_trace"])
+        service_by_area = {
+            call.get("arguments", {}).get("area_code"): call.get("arguments", {}).get("service_type")
+            for call in tool_calls
+            if call.get("name") == "get_outage_status"
+            and isinstance(call.get("arguments"), dict)
+        }
+        for tool_call in tool_calls:
+            arguments = tool_call.get("arguments", {})
+            area_code = arguments.get("area_code") or arguments.get("customer_area_code")
+            service_type = arguments.get("service_type")
+            if isinstance(area_code, str) and service_type in {"electricity", "water"}:
+                matches = find_similar(area_code, service_type)
+                state["memory_context"].extend(matches)
+                state["memory_trace"].append({
+                    "operation": "lookup",
+                    "area_code": area_code,
+                    "service_type": service_type,
+                    "match_count": len(matches),
+                })
+
+        # Persist only successful drafts, using the validated tool arguments.
+        for tool_call, tool_result in zip(tool_calls, tool_results):
+            if tool_call.get("name") != "draft_ticket" or not tool_result.get("success"):
+                continue
+            arguments = tool_call.get("arguments", {})
+            draft = tool_result.get("result", {})
+            if not isinstance(draft, dict) or not draft.get("draft_id"):
+                continue
+            area_code = arguments.get("customer_area_code")
+            service_type = arguments.get("service_type")
+            if service_type not in {"electricity", "water"}:
+                service_type = service_by_area.get(area_code)
+            if service_type not in {"electricity", "water"}:
+                service_type = {"power_outage": "electricity", "water_leak": "water"}.get(
+                    arguments.get("category")
+                )
+            if not isinstance(area_code, str) or service_type not in {"electricity", "water"}:
+                continue
+            record = save_case({
+                "draft_id": draft["draft_id"],
+                "area_code": area_code,
+                "service_type": service_type,
+                "category": arguments.get("category", "other"),
+                "summary": arguments.get("summary", ""),
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "status": draft.get("status", ""),
+            })
+            state["memory_trace"].append({
+                "operation": "write",
+                "draft_id": record["draft_id"],
+            })
+
         # Record this step in the trace, for the evidence deliverable
         trace.append({
             "iteration": state["iteration_count"],
@@ -134,6 +195,7 @@ def run_bounded_agent(customer_message: str) -> dict:
             "parse_error": result.get("parse_error"),
             "finish_reason": result.get("finish_reason"),
             "tool_results": tool_results,
+            "memory": state["memory_trace"][memory_trace_start:],
         })
 
         # --- Stop/Re-plan decision ---
