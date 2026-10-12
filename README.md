@@ -48,6 +48,20 @@ Do not put generated results in `tests/`, source code in `docs/`, or secrets in 
 
 Run `python -m tests.run_eval` for the Week 2 prompt evaluation. It writes a timestamped result file to `evidence/traces/`; API or quota errors are recorded as failures and must not be reported as model classifications. Run `python -m tests.run_rag_eval` for the offline Week 3 retrieval evaluation.
 
+## Week 6 case memory
+
+The bounded workflow keeps a small, local case history in
+`data/case_memory.json` (ignored by Git). After a successful ticket draft,
+the application stores only its draft ID, area, service type, category,
+neutral summary, timestamp, and `pending_approval` status. Records expire
+after 30 days and are capped at 100.
+
+On a later request, an exact area/service match is returned as
+`memory_context` for the human help-desk agent. This context is advisory:
+it is not sent to the model and never changes classification, priority, or
+whether a draft is created. Use `src.memory.delete_case()` or
+`src.memory.clear()` for targeted or complete deletion.
+
 ## Week 3 placement rules
 
 Place the RAG implementation in `src/`, controlled source files in `knowledge/corpus/`, provenance in `knowledge/source_register.csv`, RAG questions in `tests/`, result traces in `evidence/traces/`, the RAG diagram in `docs/architecture/`, and the evaluation analysis plus Week 3 report in `docs/evaluation/` and `docs/weekly-reports/` respectively.
