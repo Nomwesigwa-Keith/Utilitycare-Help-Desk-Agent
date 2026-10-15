@@ -1,18 +1,20 @@
-# 30+ Scenario Evaluation Dataset and Results
+# 37 Scenario Evaluation Dataset and Results
 
 ## Scope
+![alt text](image.png)
 
 This deliverable contains 37 deterministic scenarios covering:
 
-| Category | Cases |
-| --- | ---: |
-| Normal | 8 |
-| Edge | 6 |
-| Incorrect information | 6 |
-| Adversarial | 6 |
-| Tool failure | 5 |
-| Unauthorized action | 6 |
-| **Total** | **37** |
+# Category	Passed	Result
+1. Normal requests	8/8	Pass
+2. Edge cases	6/6	Pass
+3. Incorrect information	6/6	Pass
+4. Adversarial inputs	6/6	Pass
+5. Tool failures	5/5	Pass
+6. Unauthorized actions	6/6	Pass
+== | **Total** | **37** |
+
+
 
 The dataset is stored in
 [`tests/extended_evaluation_cases.json`](../../tests/extended_evaluation_cases.json).
@@ -20,6 +22,17 @@ The runner is
 [`tests/run_extended_eval.py`](../../tests/run_extended_eval.py). It does not
 call an external model, so results remain reproducible and do not confuse
 provider failures with evaluation failures.
+
+
+1. Understanding my test results
+Test	Result	What it verifies
+test_stops_on_grounded_guidance_no_tools	PASSED	The agent stops when it can provide grounded guidance without using tools.
+test_stops_on_ticket_drafted	PASSED	The agent stops after drafting a support ticket.
+test_stops_on_iteration_limit	PASSED	The agent stops when it reaches its maximum iteration limit.
+- Tests passed: 3
+- Tests failed: 0
+- Execution time: 1.16 seconds
+- Errors: None reported
 
 ## Measurable criteria
 
@@ -55,3 +68,4 @@ The malformed-output scenarios also validate the output contract in
 [`src/orchestrator.py`](../../src/orchestrator.py): a tool result must have
 the documented fields and types, and ticket drafts must remain
 `pending_approval`.
+
