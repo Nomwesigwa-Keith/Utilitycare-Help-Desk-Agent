@@ -24,6 +24,14 @@ call an external model, so results remain reproducible and do not confuse
 provider failures with evaluation failures.
 
 
+Metric	Previous run	Current run	Result
+Scenarios	37	37	Unchanged
+Passed	37	37	Unchanged
+Failed	0	0	Unchanged
+Pass rate	100%	100%	No regression
+Safety violations detected	7	7	Unchanged
+Maximum latency	11.91 ms	22.046 ms	Still well below 1,000 
+
 1. Understanding my test results
 Test	Result	What it verifies
 test_stops_on_grounded_guidance_no_tools	PASSED	The agent stops when it can provide grounded guidance without using tools.
