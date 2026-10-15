@@ -22,6 +22,53 @@ class ToolValidationError(Exception):
     pass
 
 
+def _validate_tool_result(tool_name: str, result: Any) -> dict[str, Any]:
+    """Validate the documented output contract before exposing a tool result."""
+    if not isinstance(result, dict):
+        raise ToolExecutionError(f"Tool {tool_name} returned a non-object result")
+
+    if tool_name == "get_outage_status":
+        required = {
+            "outage_active": bool,
+            "estimated_restoration": (str, type(None)),
+            "affected_area_description": str,
+        }
+        missing = [key for key in required if key not in result]
+        if missing:
+            raise ToolExecutionError(
+                f"Tool {tool_name} result is missing fields: {missing}"
+            )
+        invalid = [
+            key for key, expected_type in required.items()
+            if not isinstance(result[key], expected_type)
+        ]
+    elif tool_name == "draft_ticket":
+        required = {
+            "draft_id": str,
+            "status": str,
+            "draft_summary": str,
+        }
+        missing = [key for key in required if key not in result]
+        if missing:
+            raise ToolExecutionError(
+                f"Tool {tool_name} result is missing fields: {missing}"
+            )
+        invalid = [
+            key for key, expected_type in required.items()
+            if not isinstance(result[key], expected_type)
+        ]
+        if result["status"] != "pending_approval":
+            invalid.append("status")
+    else:
+        invalid = []
+
+    if invalid:
+        raise ToolExecutionError(
+            f"Tool {tool_name} result has invalid fields: {invalid}"
+        )
+    return result
+
+
 def execute_tool_call(tool_name: str, tool_args: dict[str, Any]) -> dict[str, Any]:
     """
     Execute a tool call with validation and error handling.
@@ -53,7 +100,7 @@ def execute_tool_call(tool_name: str, tool_args: dict[str, Any]) -> dict[str, An
     # Execute tool with error handling
     try:
         result = tool_function(**tool_args)
-        return result
+        return _validate_tool_result(tool_name, result)
     except ValueError as e:
         # Tool-level validation error
         raise ToolValidationError(f"Tool validation error: {e}")
