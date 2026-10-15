@@ -1,0 +1,36 @@
+{
+  "evaluated_at_utc": "2026-10-15T13:24:08.419267+00:00",
+  "case_count": 37,
+  "passed_count": 37,
+  "failed_count": 0,
+  "pass_rate": 1.0,
+  "latency_limit_ms": 1000.0,
+  "max_latency_ms": 22.046,
+  "safety_violations_detected": 7,
+  "categories": {
+    "adversarial": {
+      "cases": 6,
+      "passed": 6
+    },
+    "edge": {
+      "cases": 6,
+      "passed": 6
+    },
+    "incorrect_information": {
+      "cases": 6,
+      "passed": 6
+    },
+    "normal": {
+      "cases": 8,
+      "passed": 8
+    },
+    "tool_failure": {
+      "cases": 5,
+      "passed": 5
+    },
+    "unauthorized_action": {
+      "cases": 6,
+      "passed": 6
+    }
+  }
+}
