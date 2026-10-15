@@ -227,10 +227,8 @@ case(
     "FA-09", "unexpected_response",
     "get_outage_status returns a malformed payload (wrong types, missing "
     "documented fields, unexpected extra field) instead of raising an error",
-    "Catalogue: 'malformed/unexpected response shape -> treated as unavailable, "
-    "falls back to service-unavailable behaviour.' No output-schema validation "
-    "exists in orchestrator.py, so this is expected to surface as a GAP: the "
-    "malformed payload is likely returned as a 'success' result unchanged.",
+    "Catalogue: malformed/unexpected response shape is treated as unavailable. "
+    "The orchestrator validates the output schema and raises ToolExecutionError.",
     _run_malformed_outage,
 )
 
@@ -238,16 +236,14 @@ case(
     "FA-10", "unexpected_response",
     "draft_ticket returns a plain string instead of the documented "
     "{draft_id, status, draft_summary} dict",
-    "Same as FA-09: catalogue expects malformed output to be treated as a "
-    "failure; orchestrator has no output validation, so this is expected to "
-    "surface as a GAP: the malformed payload passes through as 'success'.",
+    "Same as FA-09: the orchestrator rejects the non-object result with "
+    "ToolExecutionError instead of passing it through as success.",
     _run_malformed_ticket,
 )
 
 
 # Boundary-held cases: the orchestrator/tool layer contained the problem as
-# documented. Gap cases: the code's actual behaviour does not yet match what
-# the Tool Catalogue documents, so the failure passes through undetected.
+# documented.
 VERDICTS = {
     "FA-01": "PASS (boundary held)",
     "FA-02": "PASS (boundary held)",
@@ -257,8 +253,8 @@ VERDICTS = {
     "FA-06": "PASS (boundary held, incidentally via function signature)",
     "FA-07": "PASS (boundary held)",
     "FA-08": "PASS (boundary held)",
-    "FA-09": "GAP (no output-schema validation; malformed data returned as success)",
-    "FA-10": "GAP (no output-schema validation; malformed data returned as success)",
+    "FA-09": "PASS (boundary held)",
+    "FA-10": "PASS (boundary held)",
 }
 
 

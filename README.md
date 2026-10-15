@@ -48,6 +48,11 @@ Do not put generated results in `tests/`, source code in `docs/`, or secrets in 
 
 Run `python -m tests.run_eval` for the Week 2 prompt evaluation. It writes a timestamped result file to `evidence/traces/`; API or quota errors are recorded as failures and must not be reported as model classifications. Run `python -m tests.run_rag_eval` for the offline Week 3 retrieval evaluation.
 
+Run `python -m tests.run_extended_eval` for the offline 37-scenario evaluation
+covering normal, edge, incorrect-information, adversarial, tool-failure, and
+unauthorized-action cases. It writes the dataset results and aggregate summary
+to `evidence/traces/`; no external model call is made.
+
 ## Week 6 case memory
 
 The bounded workflow keeps a small, local case history in
