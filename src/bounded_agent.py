@@ -4,12 +4,18 @@ Week 5 bounded agent workflow for the UtilityCare Triage Agent.
 Implements Sense -> Plan -> Act -> Observe -> Stop/Re-plan,
 per docs/requirements/Agent_Task_Contract_for_week_5.docx
 """
+import os
+import time
 from datetime import datetime, timezone
 
 from src.agent import call_agent
 from src.memory import find_similar, save_case
 
 MAX_ITERATIONS = 3
+
+# Model and prompt version for observability
+MODEL_ID = os.environ.get("UTILICARE_MODEL", "models/gemini-flash-latest")
+PROMPT_VERSION = "v3.0"
 
 
 def create_initial_state(customer_message: str) -> dict:
@@ -88,9 +94,12 @@ def run_bounded_agent(customer_message: str) -> dict:
 
         # --- Sense + Plan + Act happen inside call_agent() already ---
         # (it retrieves grounding, classifies, and may call tools in one pass)
+        iteration_start_time = time.time()
         try:
             result = call_agent(customer_message)
+            iteration_duration_ms = (time.time() - iteration_start_time) * 1000
         except Exception as e:
+            iteration_duration_ms = (time.time() - iteration_start_time) * 1000
             # The API call itself failed (timeout, network error, etc.)
             # Treat this as a recoverable failure: record it and stop safely
             # rather than letting the whole program crash.
@@ -108,6 +117,12 @@ def run_bounded_agent(customer_message: str) -> dict:
                 "parsed": None,
                 "tool_results": [],
                 "error": error_text,
+                # Week 7 observability enhancements for error case
+                "model": MODEL_ID,
+                "prompt_version": PROMPT_VERSION,
+                "retrieved_sources": [],
+                "latency_ms": iteration_duration_ms,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             })
             state["stop_reason"] = stop_reason
             state["trace"] = trace
@@ -196,6 +211,12 @@ def run_bounded_agent(customer_message: str) -> dict:
             "finish_reason": result.get("finish_reason"),
             "tool_results": tool_results,
             "memory": state["memory_trace"][memory_trace_start:],
+            # Week 7 observability enhancements
+            "model": result.get("model"),
+            "prompt_version": result.get("prompt_version"),
+            "retrieved_sources": result.get("grounding", {}).get("sources", []),
+            "latency_ms": iteration_duration_ms,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         })
 
         # --- Stop/Re-plan decision ---

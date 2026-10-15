@@ -1,0 +1,28 @@
+{
+  "customer_message": "My power has been out since last night in Ntinda.",
+  "classification_result": null,
+  "grounding_status": null,
+  "retrieved_sources": [],
+  "tool_calls_made": [],
+  "tool_results": [],
+  "iteration_count": 1,
+  "requires_clarification": false,
+  "clarifying_question": null,
+  "stop_reason": "provider_unavailable",
+  "memory_context": [],
+  "memory_trace": [],
+  "trace": [
+    {
+      "iteration": 1,
+      "raw_text": null,
+      "parsed": null,
+      "tool_results": [],
+      "error": "Timeout of 35.0s exceeded, last exception: 503 This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
+      "model": "models/gemini-flash-latest",
+      "prompt_version": "v3.0",
+      "retrieved_sources": [],
+      "latency_ms": 35035.253286361694,
+      "timestamp": "2026-10-15T16:36:33.549124+00:00"
+    }
+  ]
+}
