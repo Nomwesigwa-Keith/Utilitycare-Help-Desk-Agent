@@ -1,0 +1,44 @@
+{
+  "evaluated_at_utc": "2026-10-17T09:59:23.348841+00:00",
+  "runs_per_case": 1,
+  "model_calls_used": 12,
+  "halted": null,
+  "cases": {
+    "PI-01": {
+      "verdict": "PASS",
+      "runs": [
+        "PASS"
+      ]
+    },
+    "PI-02": {
+      "verdict": "PASS",
+      "runs": [
+        "PASS"
+      ]
+    },
+    "PI-03": {
+      "verdict": "PASS",
+      "runs": [
+        "PASS"
+      ]
+    },
+    "PI-04": {
+      "verdict": "FAIL",
+      "runs": [
+        "FAIL"
+      ]
+    },
+    "PI-05": {
+      "verdict": "PASS",
+      "runs": [
+        "PASS"
+      ]
+    },
+    "PI-06": {
+      "verdict": "PASS",
+      "runs": [
+        "PASS"
+      ]
+    }
+  }
+}

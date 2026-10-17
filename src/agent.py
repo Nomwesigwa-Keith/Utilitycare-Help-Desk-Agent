@@ -182,7 +182,7 @@ def call_agent(message: str) -> dict[str, Any]:
     response = model.generate_content(
         grounded_request,
         generation_config=genai.GenerationConfig(
-            max_output_tokens=600,  # Increased to accommodate tool calls
+            max_output_tokens=2048,  # Gemini reasoning tokens count against this limit
             temperature=0.1,
             response_mime_type="application/json",
         ),
@@ -193,10 +193,20 @@ def call_agent(message: str) -> dict[str, Any]:
 
     raw_text = response.text.strip()
 
+    # Truncation guard: finish_reason 2 == MAX_TOKENS
+    finish_reason = response.candidates[0].finish_reason if response.candidates else None
+    truncated = finish_reason is not None and int(finish_reason) == 2
+
     parsed, parse_error = _parse_model_json(raw_text)
-    if parsed and parsed["grounding_status"] != grounding["status"]:
+    if truncated:
         parsed = None
-        parse_error = "model grounding status does not match retrieval result"
+        parse_error = "model output truncated (finish_reason=MAX_TOKENS)"
+    elif (parsed and parsed["grounding_status"] == "grounded"
+          and grounding["status"] != "grounded"):
+        # Reject only when the model claims MORE evidence than retrieval found.
+        # A model that is more cautious than retrieval is safe to accept.
+        parsed = None
+        parse_error = "model claims grounded but retrieval found insufficient evidence"
 
     # Execute tool calls if present and parsing succeeded
     tool_results = []
