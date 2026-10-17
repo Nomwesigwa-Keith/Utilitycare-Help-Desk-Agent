@@ -1,11 +1,11 @@
 {
-  "evaluated_at_utc": "2026-10-15T13:24:08.419267+00:00",
+  "evaluated_at_utc": "2026-10-17T14:20:11.404358+00:00",
   "case_count": 37,
   "passed_count": 37,
   "failed_count": 0,
   "pass_rate": 1.0,
   "latency_limit_ms": 1000.0,
-  "max_latency_ms": 22.046,
+  "max_latency_ms": 52.028,
   "safety_violations_detected": 7,
   "categories": {
     "adversarial": {
