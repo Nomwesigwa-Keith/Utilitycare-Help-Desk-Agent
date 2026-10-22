@@ -105,3 +105,63 @@ git status
 git commit -m "Update final agent evaluation evidence"
 
 git push origin nankunda
+
+$
+## Out comes/ results
+## Summary of all test results
+
+1\. Full Pytest suite: 13 tests passed, with 1 warning. The warning concerns the deprecated `google.generativeai` SDK.
+
+2\. RAG evaluation (Week 3): 15/15 retrieval test cases passed — 100% pass rate.
+
+3\. Extended agent evaluation (37 scenarios): 37/37 cases passed — 100% pass rate, with 0 failed cases.
+
+4\. Safety evaluation: 7 safety violations were detected during the extended evaluation. These were detected by the evaluation process; the available summary does not establish that all underlying issues were resolved.
+
+5\. Latency evaluation: The latest committed extended evaluation summary reported a maximum latency of 17.3 ms.
+
+6\. Bounded agent mock tests: 3 tests passed. They covered grounded guidance without tools, ticket drafting, and enforcement of the iteration limit.
+
+7\. Contract validation tests: A focused test command was documented, but its separate final result is not available in the shared records.
+
+8\. Tool tests: A focused test command was documented, but its separate final result is not available in the shared records.
+
+9\. Week 6 working-memory tests: A focused test command was documented, but its separate final result is not available in the shared records. An older report says 9 tests passed, but this is outdated compared with the later full-suite result of 13 passed.
+
+10\. Week 4 failure-authorization tests: The evidence identifies a remaining concern: malformed tool outputs from `get_outage_status` and `draft_ticket` were reported as successful. Output-schema validation was recommended, but the available evidence does not confirm that this was fixed.
+
+11\. Week 5 live Gemini evaluation: 3 of 4 attempts encountered `MAX_TOKENS` and JSON-parsing failures. They stopped safely with `model_parsing_failure`, but the live-model reliability issue remained unresolved in the available evidence.
+
+12\. General evaluation command (`python -m tests.run_eval`): The command was run previously, but its final result was not confirmed in the shared records.
+
+13\. Git evidence checks: `git diff --cached --check` passed, and the evaluation-results commit was successfully pushed to branch `nankunda`. The process document and three screenshots were still untracked immediately after that push.
+
+Overall conclusion: The main reported automated evaluations performed well: the full suite passed 13 tests, RAG passed 15/15 cases, and extended evaluation passed 37/37 scenarios.## Summary of all test results
+
+1\. Full Pytest suite: 13 tests passed, with 1 warning. The warning concerns the deprecated `google.generativeai` SDK.
+
+2\. RAG evaluation (Week 3): 15/15 retrieval test cases passed — 100% pass rate.
+
+3\. Extended agent evaluation (37 scenarios): 37/37 cases passed — 100% pass rate, with 0 failed cases.
+
+4\. Safety evaluation: 7 safety violations were detected during the extended evaluation. These were detected by the evaluation process; the available summary does not establish that all underlying issues were resolved.
+
+5\. Latency evaluation: The latest committed extended evaluation summary reported a maximum latency of 17.3 ms.
+
+6\. Bounded agent mock tests: 3 tests passed. They covered grounded guidance without tools, ticket drafting, and enforcement of the iteration limit.
+
+7\. Contract validation tests: A focused test command was documented, but its separate final result is not available in the shared records.
+
+8\. Tool tests: A focused test command was documented, but its separate final result is not available in the shared records.
+
+9\. Week 6 working-memory tests: A focused test command was documented, but its separate final result is not available in the shared records. An older report says 9 tests passed, but this is outdated compared with the later full-suite result of 13 passed.
+
+10\. Week 4 failure-authorization tests: The evidence identifies a remaining concern: malformed tool outputs from `get_outage_status` and `draft_ticket` were reported as successful. Output-schema validation was recommended, but the available evidence does not confirm that this was fixed.
+
+11\. Week 5 live Gemini evaluation: 3 of 4 attempts encountered `MAX_TOKENS` and JSON-parsing failures. They stopped safely with `model_parsing_failure`, but the live-model reliability issue remained unresolved in the available evidence.
+
+12\. General evaluation command (`python -m tests.run_eval`): The command was run previously, but its final result was not confirmed in the shared records.
+
+13\. Git evidence checks: `git diff --cached --check` passed, and the evaluation-results commit was successfully pushed to branch `nankunda`. The process document and three screenshots were still untracked immediately after that push.
+
+Overall conclusion: The main reported automated evaluations performed well: the full suite passed 13 tests, RAG passed 15/15 cases, and extended evaluation passed 37/37 scenarios. However, the malformed-output validation concern, Gemini token-limit failures, 
