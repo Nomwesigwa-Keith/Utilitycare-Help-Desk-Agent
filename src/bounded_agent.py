@@ -14,7 +14,7 @@ from src.memory import find_similar, save_case
 MAX_ITERATIONS = 3
 
 # Model and prompt version for observability
-MODEL_ID = os.environ.get("UTILICARE_MODEL", "models/gemini-flash-latest")
+MODEL_ID = os.environ.get("UTILICARE_MODEL", "gemini-flash-lite-latest")
 PROMPT_VERSION = "v3.0"
 
 

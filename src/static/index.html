@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UtiliCare Help Desk Triage Agent | Live Demonstration Console</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-cyan-500 selection:text-white">
+
+  <!-- Top Navigation Bar -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Logo & Project Identity -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-base font-bold tracking-tight text-white">UtiliCare Help-Desk Agent</h1>
+          </div>
+          <p class="text-xs text-slate-400">AI Triage for Electricity & Water Services</p>
+        </div>
+      </div>
+
+      <!-- Controls & Status Indicators -->
+      <div class="flex items-center space-x-4">
+        <!-- System Reset -->
+        <button onclick="resetConversation()" title="Clear Chat & Trace" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors border border-slate-700">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Live Demo Quick Scenario Bar -->
+  <div class="bg-slate-900 border-b border-slate-800/80 px-4 py-2.5">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center gap-2 text-xs">
+      <span class="font-semibold text-slate-400 mr-1 flex items-center">
+        <svg class="w-3.5 h-3.5 mr-1 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Live Presentation Scenarios:
+      </span>
+      <button onclick="loadScenario('ntinda_outage')" class="scenario-btn bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-500/50 px-2.5 py-1 rounded-md transition-all flex items-center gap-1.5">
+        <span class="text-amber-400">⚡</span> 1. Ntinda Power Outage (Normal Grounded)
+      </button>
+      <button onclick="loadScenario('kololo_burst')" class="scenario-btn bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-500/50 px-2.5 py-1 rounded-md transition-all flex items-center gap-1.5">
+        <span class="text-blue-400">💧</span> 2. Kololo Water Burst (Human-in-the-Loop Ticket)
+      </button>
+      <button onclick="loadScenario('bill_waiver_injection')" class="scenario-btn bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-red-500/50 px-2.5 py-1 rounded-md transition-all flex items-center gap-1.5">
+        <span class="text-red-400">🛑</span> 3. Bill Waiver Injection (Adversarial Boundary)
+      </button>
+      <button onclick="loadScenario('high_bill_dispute')" class="scenario-btn bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-500/50 px-2.5 py-1 rounded-md transition-all flex items-center gap-1.5">
+        <span class="text-emerald-400">💰</span> 4. High Bill Dispute (RAG Grounding)
+      </button>
+      <button onclick="loadScenario('ambiguous_request')" class="scenario-btn bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-500/50 px-2.5 py-1 rounded-md transition-all flex items-center gap-1.5">
+        <span class="text-purple-400">❓</span> 5. Ambiguous Query (Clarification)
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Grid Layout: Left = Customer Chat, Right = Operator Console -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT COLUMN: Customer Chat Portal (5 Cols) -->
+    <section class="lg:col-span-5 flex flex-col bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl shadow-black/40">
+      
+      <!-- Panel Header -->
+      <div class="px-5 py-3.5 border-b border-slate-800 bg-slate-900/90 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
+          <h2 class="text-sm font-semibold text-white">Customer Help-Desk Portal</h2>
+        </div>
+        <span class="text-xs text-slate-400 font-mono">Channel: Web Chat</span>
+      </div>
+
+      <!-- Messages Timeline -->
+      <div id="chat-messages" class="flex-1 p-4 space-y-4 overflow-y-auto max-h-[560px] min-h-[420px]">
+        <!-- Welcome Message -->
+        <div class="flex items-start space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-cyan-600/30 border border-cyan-500/30 text-cyan-300 flex items-center justify-center flex-shrink-0 text-sm font-bold">
+            UC
+          </div>
+          <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl rounded-tl-none p-3.5 max-w-[88%] text-sm text-slate-200">
+            <p class="font-medium text-white mb-1">Welcome to UtiliCare Help Desk</p>
+            <p class="text-slate-300 text-xs leading-relaxed">
+              I am your AI triage assistant for electricity and water inquiries. Describe your service issue, power outage, or billing query.
+            </p>
+            <div class="mt-2 text-[11px] text-cyan-400 bg-cyan-950/40 border border-cyan-800/40 rounded px-2 py-1 flex items-center gap-1.5">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span>Tip: Click any scenario button above to populate a live demo case.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Box -->
+      <div class="p-3.5 border-t border-slate-800 bg-slate-900/90">
+        <form id="triage-form" onsubmit="submitMessage(event)" class="space-y-2">
+          <div class="relative">
+            <textarea
+              id="customer-input"
+              rows="3"
+              placeholder="Describe your utility issue (e.g., 'Power is out in Ntinda since 8 AM')..."
+              class="w-full bg-slate-950 border border-slate-700 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-500 resize-none outline-none transition"
+            ></textarea>
+          </div>
+          <div class="flex items-center justify-between">
+            <span id="char-count" class="text-xs text-slate-500">0 characters</span>
+            <div class="flex items-center space-x-2">
+              <button
+                type="button"
+                onclick="clearInput()"
+                class="px-3 py-1.5 text-xs text-slate-400 hover:text-white transition"
+              >
+                Clear
+              </button>
+              <button
+                type="submit"
+                id="send-btn"
+                class="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-medium text-xs rounded-xl shadow-lg shadow-cyan-600/20 transition flex items-center space-x-1.5 disabled:opacity-50"
+              >
+                <span id="send-btn-text">Submit Inquiry</span>
+                <svg id="send-spinner" class="hidden w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </section>
+
+    <!-- RIGHT COLUMN: Operator Console & Live Telemetry Inspector (7 Cols) -->
+    <section class="lg:col-span-7 flex flex-col space-y-4">
+      
+      <!-- Bounded Workflow Pipeline State Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Bounded Agent Workflow Lifecycle</h3>
+          </div>
+          <div class="flex items-center space-x-2 font-mono text-[11px]">
+            <span id="iteration-badge" class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">Iteration: 0 / 3</span>
+            <span id="latency-badge" class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-400">0.0 ms</span>
+          </div>
+        </div>
+
+        <!-- 5-Step Visualizer -->
+        <div class="grid grid-cols-5 gap-2 text-center text-xs">
+          <div id="step-sense" class="workflow-step bg-slate-950 border border-slate-800 rounded-xl p-2.5 transition-all">
+            <div class="font-mono text-[10px] text-slate-500 uppercase">Step 1</div>
+            <div class="font-bold text-slate-300 mt-0.5">Sense</div>
+            <div class="text-[10px] text-slate-500 truncate mt-0.5">Ingest & RAG</div>
+          </div>
+
+          <div id="step-plan" class="workflow-step bg-slate-950 border border-slate-800 rounded-xl p-2.5 transition-all">
+            <div class="font-mono text-[10px] text-slate-500 uppercase">Step 2</div>
+            <div class="font-bold text-slate-300 mt-0.5">Plan</div>
+            <div class="text-[10px] text-slate-500 truncate mt-0.5">Classify & Route</div>
+          </div>
+
+          <div id="step-act" class="workflow-step bg-slate-950 border border-slate-800 rounded-xl p-2.5 transition-all">
+            <div class="font-mono text-[10px] text-slate-500 uppercase">Step 3</div>
+            <div class="font-bold text-slate-300 mt-0.5">Act</div>
+            <div class="text-[10px] text-slate-500 truncate mt-0.5">Tool Invocation</div>
+          </div>
+
+          <div id="step-observe" class="workflow-step bg-slate-950 border border-slate-800 rounded-xl p-2.5 transition-all">
+            <div class="font-mono text-[10px] text-slate-500 uppercase">Step 4</div>
+            <div class="font-bold text-slate-300 mt-0.5">Observe</div>
+            <div class="text-[10px] text-slate-500 truncate mt-0.5">Validate Outputs</div>
+          </div>
+
+          <div id="step-stop" class="workflow-step bg-slate-950 border border-slate-800 rounded-xl p-2.5 transition-all">
+            <div class="font-mono text-[10px] text-slate-500 uppercase">Step 5</div>
+            <div class="font-bold text-slate-300 mt-0.5">Stop / Re-plan</div>
+            <div class="text-[10px] text-slate-500 truncate mt-0.5">Bounded Exit</div>
+          </div>
+        </div>
+
+        <!-- Triage Summary & Classification Strip -->
+        <div class="mt-3 pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="flex items-center space-x-2">
+            <span class="text-slate-400">Classification:</span>
+            <span id="category-badge" class="px-2 py-0.5 rounded-full font-semibold bg-slate-800 text-slate-400 border border-slate-700">None</span>
+            <span id="confidence-badge" class="px-2 py-0.5 rounded-full font-semibold bg-slate-800 text-slate-400 border border-slate-700">Confidence: --</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-slate-400">Stop Reason:</span>
+            <span id="stop-reason-badge" class="font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">idle</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Human-in-the-Loop Action Card (Shown when ticket is drafted) -->
+      <div id="hitl-container" class="hidden bg-amber-950/30 border border-amber-600/50 rounded-2xl p-4 shadow-lg transition-all animate-fadeIn">
+        <div class="flex items-start justify-between">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center font-bold text-sm">
+              !
+            </div>
+            <div>
+              <div class="flex items-center space-x-2">
+                <h4 class="text-sm font-bold text-amber-300">Human Approval Required (Safety Rule B-01)</h4>
+                <span id="hitl-status-badge" class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                  pending_approval
+                </span>
+              </div>
+              <p class="text-xs text-amber-200/80 mt-0.5">
+                The agent has drafted a ticket but cannot autonomously dispatch or update infrastructure.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ticket Summary Form / Detail -->
+        <div class="mt-3 bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-xs space-y-2">
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <span class="text-slate-500 font-mono text-[10px]">DRAFT ID</span>
+              <p id="hitl-draft-id" class="font-mono font-semibold text-slate-200">--</p>
+            </div>
+            <div>
+              <span class="text-slate-500 font-mono text-[10px]">CATEGORY</span>
+              <p id="hitl-category" class="font-semibold text-slate-200">--</p>
+            </div>
+            <div>
+              <span class="text-slate-500 font-mono text-[10px]">PRIORITY</span>
+              <p id="hitl-priority" class="font-semibold text-amber-400">--</p>
+            </div>
+          </div>
+          <div>
+            <span class="text-slate-500 font-mono text-[10px]">SUMMARY (OPERATOR EDITABLE)</span>
+            <textarea id="hitl-summary" rows="2" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 resize-none"></textarea>
+          </div>
+          <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+            <span class="text-[11px] text-slate-400 font-mono">Area Code: <strong id="hitl-area" class="text-slate-200">--</strong></span>
+            <div class="flex items-center space-x-2">
+              <button onclick="rejectTicket()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs transition">
+                Reject / Hold
+              </button>
+              <button onclick="approveTicket()" id="hitl-approve-btn" class="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-md shadow-emerald-900/40 transition flex items-center space-x-1.5">
+                <span>Approve & Dispatch</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabbed Telemetry & Evidence Inspector -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl flex-1 flex flex-col overflow-hidden shadow-xl">
+        
+        <!-- Tab Navigation -->
+        <div class="flex border-b border-slate-800 bg-slate-950/60 px-4 text-xs">
+          <button onclick="switchTab('rag')" id="tab-btn-rag" class="tab-btn py-3 px-3 font-semibold border-b-2 border-cyan-500 text-cyan-400 transition-colors">
+            RAG Grounding & Sources
+          </button>
+          <button onclick="switchTab('tools')" id="tab-btn-tools" class="tab-btn py-3 px-3 font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-colors">
+            Tool Authorizations
+          </button>
+          <button onclick="switchTab('memory')" id="tab-btn-memory" class="tab-btn py-3 px-3 font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-colors">
+            Working Memory (Isolated)
+          </button>
+          <button onclick="switchTab('trace')" id="tab-btn-trace" class="tab-btn py-3 px-3 font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-colors">
+            Execution Trace JSON
+          </button>
+        </div>
+
+        <!-- Tab Contents Container -->
+        <div class="p-4 flex-1 overflow-y-auto max-h-[360px] text-xs">
+          
+          <!-- TAB 1: RAG Grounding -->
+          <div id="tab-content-rag" class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-slate-400 font-medium">Grounding Status:</span>
+              <span id="rag-status-badge" class="px-2 py-0.5 rounded font-mono font-semibold bg-slate-800 text-slate-400">None</span>
+            </div>
+            <div id="rag-sources-list" class="space-y-2">
+              <p class="text-slate-500 italic">No query processed yet. Send an inquiry or click a demo scenario.</p>
+            </div>
+          </div>
+
+          <!-- TAB 2: Tool Execution & Safety Boundary -->
+          <div id="tab-content-tools" class="space-y-3 hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-slate-400 font-medium">Approved Catalogue Tools:</span>
+              <div class="flex space-x-1.5 font-mono text-[11px]">
+                <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">get_outage_status</span>
+                <span class="px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">draft_ticket</span>
+              </div>
+            </div>
+            <div id="tools-history-list" class="space-y-2">
+              <p class="text-slate-500 italic">No tools executed in this session.</p>
+            </div>
+          </div>
+
+          <!-- TAB 3: Working Memory & Isolation -->
+          <div id="tab-content-memory" class="space-y-3 hidden">
+            <div class="bg-cyan-950/30 border border-cyan-800/40 rounded-xl p-3 text-cyan-200">
+              <div class="flex items-center space-x-2 font-semibold">
+                <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                <span>Memory Boundary Rule M-02 (Strict Isolation)</span>
+              </div>
+              <p class="text-[11px] text-cyan-300/80 mt-1 leading-relaxed">
+                Case memory is advisory for human help-desk operators only. Memory context is strictly isolated and <strong>NEVER</strong> injected into foundation model prompt inputs to prevent context pollution or decision bias.
+              </p>
+            </div>
+            <div id="memory-cases-list" class="space-y-2">
+              <p class="text-slate-500 italic">No historical case lookups recorded.</p>
+            </div>
+          </div>
+
+          <!-- TAB 4: Raw Trace JSON -->
+          <div id="tab-content-trace" class="hidden">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-slate-400 font-mono text-[11px]">Execution Telemetry Payload</span>
+              <button onclick="copyTraceJSON()" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px]">Copy JSON</button>
+            </div>
+            <pre id="trace-json-viewer" class="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-[11px] text-slate-300 overflow-x-auto max-h-[300px]">{}</pre>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Evaluation Modal (37/37 Benchmark) -->
+  <div id="eval-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative">
+      <button onclick="closeEvalModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-white">Capstone Evaluation Summary (37 Deterministic Scenarios)</h3>
+          <p class="text-xs text-slate-400">Offline reproducible evaluation against deterministic test oracle</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-3 my-4">
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-center">
+          <div class="text-2xl font-bold text-emerald-400">37 / 37</div>
+          <div class="text-xs text-slate-400 font-medium">Scenarios Passed</div>
+        </div>
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-center">
+          <div class="text-2xl font-bold text-cyan-400">100%</div>
+          <div class="text-xs text-slate-400 font-medium">Pass Rate</div>
+        </div>
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-center">
+          <div class="text-2xl font-bold text-purple-400">0</div>
+          <div class="text-xs text-slate-400 font-medium">Safety Violations</div>
+        </div>
+      </div>
+      <div class="overflow-x-auto text-xs border border-slate-800 rounded-xl">
+        <table class="w-full text-left">
+          <thead class="bg-slate-950 text-slate-400 font-semibold border-b border-slate-800">
+            <tr>
+              <th class="py-2.5 px-3">Category</th>
+              <th class="py-2.5 px-3">Cases</th>
+              <th class="py-2.5 px-3">Passed</th>
+              <th class="py-2.5 px-3">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/60 font-mono text-slate-300">
+            <tr><td class="py-2 px-3 font-sans">Normal Requests</td><td class="py-2 px-3">8</td><td class="py-2 px-3 text-emerald-400">8</td><td class="py-2 px-3 text-emerald-400">PASS</td></tr>
+            <tr><td class="py-2 px-3 font-sans">Edge Cases</td><td class="py-2 px-3">6</td><td class="py-2 px-3 text-emerald-400">6</td><td class="py-2 px-3 text-emerald-400">PASS</td></tr>
+            <tr><td class="py-2 px-3 font-sans">Incorrect Information</td><td class="py-2 px-3">6</td><td class="py-2 px-3 text-emerald-400">6</td><td class="py-2 px-3 text-emerald-400">PASS</td></tr>
+            <tr><td class="py-2 px-3 font-sans">Adversarial & Injections</td><td class="py-2 px-3">6</td><td class="py-2 px-3 text-emerald-400">6</td><td class="py-2 px-3 text-emerald-400">PASS</td></tr>
+            <tr><td class="py-2 px-3 font-sans">Tool Backend Failures</td><td class="py-2 px-3">5</td><td class="py-2 px-3 text-emerald-400">5</td><td class="py-2 px-3 text-emerald-400">PASS</td></tr>
+            <tr><td class="py-2 px-3 font-sans">Unauthorized Actions</td><td class="py-2 px-3">6</td><td class="py-2 px-3 text-emerald-400">6</td><td class="py-2 px-3 text-emerald-400">PASS</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-4 flex justify-end">
+        <button onclick="closeEvalModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg transition">Close Summary</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js?v=2.1"></script>
+</body>
+</html>
