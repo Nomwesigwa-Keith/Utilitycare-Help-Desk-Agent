@@ -28,6 +28,7 @@ def run_python(code: str, memory_path: Path) -> str:
         text=True,
         capture_output=True,
         check=True,
+        stdin=subprocess.DEVNULL,
     )
     return result.stdout
 
