@@ -125,6 +125,8 @@ def _parse_model_json(raw_text: str) -> tuple[dict[str, Any] | None, str | None]
         return None, "response contains unsupported confidence"
     if not isinstance(value["summary"], str) or not value["summary"].strip():
         return None, "response summary must be a non-empty string"
+    if len(value["summary"].split()) > 25:
+        return None, "response summary must contain at most 25 words"
     if not isinstance(value["grounded_guidance"], str) or not value["grounded_guidance"].strip():
         return None, "grounded_guidance must be a non-empty string"
     if value["grounding_status"] not in {"grounded", "insufficient_evidence"}:
@@ -134,6 +136,8 @@ def _parse_model_json(raw_text: str) -> tuple[dict[str, Any] | None, str | None]
     question = value["clarifying_question"]
     if question is not None and not isinstance(question, str):
         return None, "clarifying_question must be a string or null"
+    if question is not None and not question.strip():
+        return None, "clarifying_question must be non-empty when provided"
     if value["requires_clarification"] != (question is not None):
         return None, "clarification fields are inconsistent"
     
@@ -146,6 +150,8 @@ def _parse_model_json(raw_text: str) -> tuple[dict[str, Any] | None, str | None]
                 return None, "each tool_call must be a dict"
             if "name" not in tool_call or "arguments" not in tool_call:
                 return None, "each tool_call must have 'name' and 'arguments'"
+            if not isinstance(tool_call["name"], str) or not tool_call["name"].strip():
+                return None, "tool_call name must be a non-empty string"
             if not isinstance(tool_call["arguments"], dict):
                 return None, "tool_call arguments must be a dict"
     

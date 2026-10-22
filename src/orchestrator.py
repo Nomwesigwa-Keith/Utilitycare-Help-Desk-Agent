@@ -33,6 +33,11 @@ def _validate_tool_result(tool_name: str, result: Any) -> dict[str, Any]:
             "estimated_restoration": (str, type(None)),
             "affected_area_description": str,
         }
+        unexpected = set(result) - set(required)
+        if unexpected:
+            raise ToolExecutionError(
+                f"Tool {tool_name} result has unexpected fields: {sorted(unexpected)}"
+            )
         missing = [key for key in required if key not in result]
         if missing:
             raise ToolExecutionError(
@@ -48,6 +53,11 @@ def _validate_tool_result(tool_name: str, result: Any) -> dict[str, Any]:
             "status": str,
             "draft_summary": str,
         }
+        unexpected = set(result) - set(required)
+        if unexpected:
+            raise ToolExecutionError(
+                f"Tool {tool_name} result has unexpected fields: {sorted(unexpected)}"
+            )
         missing = [key for key in required if key not in result]
         if missing:
             raise ToolExecutionError(
