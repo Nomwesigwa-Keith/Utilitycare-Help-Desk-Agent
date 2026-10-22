@@ -6,37 +6,22 @@
     "customer_message": "something is wrong with my service, not sure what exactly",
     "classification_result": null,
     "grounding_status": null,
-    "retrieved_sources": [
-      {
-        "doc_id": "KB-020",
-        "title": "Disputing a billing charge",
-        "category": "billing_query"
-      },
-      {
-        "doc_id": "KB-028",
-        "title": "General service request categories",
-        "category": "other"
-      },
-      {
-        "doc_id": "KB-008",
-        "title": "Meter display not working",
-        "category": "meter_fault"
-      }
-    ],
+    "retrieved_sources": [],
     "tool_calls_made": [],
     "tool_results": [],
     "iteration_count": 1,
     "requires_clarification": false,
     "clarifying_question": null,
-    "stop_reason": "model_parsing_failure",
+    "stop_reason": "api_call_failed",
+    "memory_context": [],
+    "memory_trace": [],
     "trace": [
       {
         "iteration": 1,
-        "raw_text": "{\n  \"category\": \"other\",\n  \"confidence\": \"low\",\n  \"summary\": \"The",
+        "raw_text": null,
         "parsed": null,
-        "parse_error": "invalid JSON: Unterminated string starting at: line 4 column 14 (char 61)",
-        "finish_reason": "MAX_TOKENS",
-        "tool_results": []
+        "tool_results": [],
+        "error": "GEMINI_API_KEY is not set. Create a .env file (see .env.example) or export it in your shell before running."
       }
     ]
   }
