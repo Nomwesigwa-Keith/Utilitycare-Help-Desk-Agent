@@ -42,11 +42,16 @@ gantt
 ### Slide 1: Title & Project Identity (0:00 – 0:45)
 **Header:** UtiliCare: Bounded AI Help-Desk Triage Agent  
 **Subtitle:** Engineering Reliable, Safety-Bounded AI for Public Utility Operations  
-**Presenter:** [Your Name] — Bachelor of Software Engineering (Year 4, Semester 1)  
-**Supervisor / Course:** BSE4104 Emerging Trends in Software Engineering, Makerere University  
+**Team Members & Week 8 Deliverables:**
+- **Nomwesigwa Keith:** Project Lead, ClickUp Governance & Repo Integrity
+- **Mubiru Umar:** Final Tagged Release (`v1.0.0`) & Clean-Clone Run Instructions
+- **Nankunda Lilian:** Final Evaluation & Evidence Pack (37 Scenarios & Traces)
+- **Arok John Mayen & Khot Adet Majuong:** Presentation Deck & Live Demo Architecture
+- **All Team Members (Collaborative):** 8–12 Page Final Engineering Report
+**Supervisor / Course:** Dr. Kamulegeya Grace B (PhD), BSE4104 Emerging Trends in Software Engineering, Makerere University  
 
 **Visual Layout:**
-- Left: Project logo, institution crest, and release badge (`Week 8 Release • Final Evaluation`).
+- Left: Project logo, institution crest, and release badge (`Week 8 Release • Tag v1.0.0`).
 - Right: System tagline: *"AI triage with deterministic guardrails and mandatory human authorization."*
 
 **Speaker Script (What to say):**
@@ -220,19 +225,20 @@ gantt
 
 ---
 
-### Slide 11: System Limitations & Future Roadmap (13:30 – 14:15)
-**Header:** Known Engineering Limitations & Production Roadmap  
+### Slide 11: Team Task Allocation & Week 8 Release Governance (13:30 – 14:15)
+**Header:** Capstone Deliverables & Individual Member Ownership  
 
-**Bullet Points:**
-- **SDK Modernization:** Currently utilizes `google-generativeai`; planned migration to the consolidated `google-genai` SDK and pinned model snapshots.
-- **Provider Quota Contingency:** Free-tier Gemini endpoints experience transient demand spikes (503/429); production deployment requires dedicated enterprise quota or local SLM (e.g., Llama 3 8B).
-- **Distributed Memory:** Upgrade local file-based `case_memory.json` to a distributed cache (Redis) with encrypted multi-tenant partitions.
-- **Multi-Lingual Triage:** Expanding RAG corpus to support local languages (Luganda, Runyankore, Swahili).
+**Visual Table:**
+| Deliverable | Requirements | Assignee / Member |
+| :--- | :--- | :--- |
+| **Final tagged release and README/run instructions** | Fix critical defects, document known limitations, tag a release, and make it runnable from a clean clone | **Umar** (Mubiru Umar) |
+| **Final engineering report (8-12 pages, excluding appendices)** | Ten sections from the brief's template, plus references and appendices | **Everyone** (All 5 Team Members) |
+| **Final evaluation/evidence pack** | Evaluation results, traces, the Failure Catalogue, and screenshots | **Lilian** (Nankunda Lilian) |
+| **Presentation deck and live demonstration** | 12-15 minutes, built around a real demo | **Arok & Khot** (Arok John Mayen & Khot Adet Majuong) |
+| **Completed ClickUp board and repository evidence** | Tasks closed and linked to PRs and commits | **Keith** (Nomwesigwa Keith) |
 
 **Speaker Script:**
-> *"We remain transparent about current limitations. The prototype currently runs on the Gemini developer tier, which is subject to occasional rate limits. For production deployment, we recommend dedicated enterprise quotas or a fine-tuned local small language model. 
-> 
-> Furthermore, transitioning the advisory memory store from local JSON to Redis will support high-concurrency utility call centers across Uganda."*
+> *"Slide 11 demonstrates our disciplined team organization throughout Week 8. Each member took direct ownership of a primary capstone deliverable: Umar managed final release tagging and clean-clone run validation; Lilian executed our 37-scenario evaluation pack; Arok and Khot engineered our presentation deck and decoupled live demonstration; Keith governed our ClickUp sprints and repository merges; and all members collaboratively authored our 10-section Final Engineering Report."*
 
 ---
 
