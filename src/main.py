@@ -4,8 +4,9 @@ main.py — exposes the UtiliCare Help-Desk Triage Agent via Web UI & HTTP API.
 Run with:
     uvicorn src.main:app --reload
 
-Interactive Web Console:
-    http://127.0.0.1:8000/
+Access:
+    Customer Portal:     http://127.0.0.1:8000/
+    Supervisor Console:  http://127.0.0.1:8000/supervisor
 """
 
 import json
@@ -36,6 +37,10 @@ app = FastAPI(title="UtiliCare Help-Desk Triage Agent", version="8.0")
 # Mount static files
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
+# In-memory stores for decoupled Customer & Supervisor interaction
+TICKET_STORE: dict[str, dict] = {}
+LATEST_TELEMETRY: dict[str, Any] = {}
+
 
 class TriageRequest(BaseModel):
     message: str
@@ -43,19 +48,63 @@ class TriageRequest(BaseModel):
     demo_mode: bool = False
 
 
-class TicketApprovalRequest(BaseModel):
+class TicketActionRequest(BaseModel):
     draft_id: str
     operator_notes: str | None = None
-    operator_id: str = "HELP_DESK_OPERATOR_4104"
+    operator_id: str = "SUPERVISOR-4104"
+
+
+def _record_draft_ticket(
+    draft_data: dict,
+    category: str = "water_leak",
+    priority: str = "high",
+    area: str = "KOLOLO",
+    summary: str = "",
+) -> None:
+    """Helper to store drafted tickets for the supervisor review queue."""
+    if not isinstance(draft_data, dict):
+        return
+    draft_id = draft_data.get("draft_id")
+    if not draft_id:
+        return
+
+    clean_summary = summary
+    draft_summary = draft_data.get("draft_summary", "")
+    if not clean_summary and draft_summary:
+        m = re.search(r"Summary:\s*([^\r\n]+)", draft_summary, re.IGNORECASE)
+        clean_summary = m.group(1).strip() if m else draft_summary
+
+    TICKET_STORE[draft_id] = {
+        "draft_id": draft_id,
+        "category": draft_data.get("category", category),
+        "priority": draft_data.get("priority", priority),
+        "area_code": draft_data.get("customer_area_code") or area,
+        "summary": clean_summary or "Urgent utility incident reported",
+        "status": "pending_approval",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "dispatched_at": None,
+        "dispatch_reference": None,
+        "operator_id": None,
+        "operator_notes": None,
+    }
 
 
 @app.get("/")
-def get_index():
-    """Serves the interactive triage demonstration web console."""
-    index_file = STATIC_DIR / "index.html"
-    if not index_file.exists():
-        raise HTTPException(status_code=404, detail="Web UI not found")
-    return FileResponse(str(index_file))
+def get_customer_portal():
+    """Serves the public Customer Support Portal."""
+    customer_file = STATIC_DIR / "customer.html"
+    if not customer_file.exists():
+        customer_file = STATIC_DIR / "index.html"
+    return FileResponse(str(customer_file))
+
+
+@app.get("/supervisor")
+def get_supervisor_console():
+    """Serves the internal Supervisor Operations Dashboard."""
+    supervisor_file = STATIC_DIR / "supervisor.html"
+    if not supervisor_file.exists():
+        raise HTTPException(status_code=404, detail="Supervisor console not found")
+    return FileResponse(str(supervisor_file))
 
 
 @app.get("/health")
@@ -139,13 +188,52 @@ def get_eval_summary() -> dict:
     }
 
 
+@app.get("/api/tickets/pending")
+def get_pending_tickets() -> dict:
+    """Returns tickets for the supervisor review queue and recent dispatches."""
+    pending = [t for t in TICKET_STORE.values() if t.get("status") == "pending_approval"]
+    dispatched = [t for t in TICKET_STORE.values() if t.get("status") in {"dispatched", "held_rejected"}]
+    pending.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+    dispatched.sort(key=lambda x: x.get("dispatched_at") or x.get("created_at", ""), reverse=True)
+    return {
+        "pending_tickets": pending,
+        "dispatched_tickets": dispatched,
+        "total_pending": len(pending),
+    }
+
+
+@app.get("/api/telemetry/latest")
+def get_latest_telemetry() -> dict:
+    """Returns the most recent bounded agent telemetry for the supervisor inspector."""
+    return LATEST_TELEMETRY
+
+
 @app.post("/api/tickets/approve")
-def approve_ticket(req: TicketApprovalRequest) -> dict:
+def approve_ticket(req: TicketActionRequest) -> dict:
     """
     Simulates human help-desk supervisor approval for a draft ticket.
     Visually enforces Rule B-01: AI can only draft tickets, human dispatches.
     """
     dispatch_ref = f"DSP-{int(time.time()) % 100000:05d}"
+    now_iso = datetime.now(timezone.utc).isoformat()
+    ticket = TICKET_STORE.get(req.draft_id)
+    if ticket:
+        ticket["status"] = "dispatched"
+        ticket["dispatch_reference"] = dispatch_ref
+        ticket["operator_id"] = req.operator_id
+        ticket["operator_notes"] = req.operator_notes or ticket.get("summary")
+        ticket["dispatched_at"] = now_iso
+    else:
+        TICKET_STORE[req.draft_id] = {
+            "draft_id": req.draft_id,
+            "status": "dispatched",
+            "dispatch_reference": dispatch_ref,
+            "operator_id": req.operator_id,
+            "operator_notes": req.operator_notes,
+            "created_at": now_iso,
+            "dispatched_at": now_iso,
+        }
+
     return {
         "success": True,
         "draft_id": req.draft_id,
@@ -153,16 +241,28 @@ def approve_ticket(req: TicketApprovalRequest) -> dict:
         "dispatch_reference": dispatch_ref,
         "operator_id": req.operator_id,
         "operator_notes": req.operator_notes,
-        "dispatched_at": datetime.now(timezone.utc).isoformat(),
+        "dispatched_at": now_iso,
         "message": f"Ticket {req.draft_id} authorized and dispatched to engineering crew as {dispatch_ref}.",
     }
+
+
+@app.post("/api/tickets/reject")
+def reject_ticket(req: TicketActionRequest) -> dict:
+    """Supervisor holds or rejects an invalid/duplicate draft."""
+    now_iso = datetime.now(timezone.utc).isoformat()
+    ticket = TICKET_STORE.get(req.draft_id)
+    if ticket:
+        ticket["status"] = "held_rejected"
+        ticket["operator_id"] = req.operator_id
+        ticket["operator_notes"] = req.operator_notes or "Held by supervisor"
+        ticket["dispatched_at"] = now_iso
+    return {"success": True, "draft_id": req.draft_id, "status": "held_rejected"}
 
 
 def _simulate_bounded_agent(customer_message: str) -> dict:
     """
     Deterministic bounded agent execution for reliable demonstrations.
-    Executes actual local RAG retrieval, real tool calls, and memory storage,
-    providing 100% reliable uptime during presentation defenses.
+    Executes actual local RAG retrieval, real tool calls, and memory storage.
     """
     msg_lower = customer_message.lower()
     start_time = time.time()
@@ -196,6 +296,7 @@ def _simulate_bounded_agent(customer_message: str) -> dict:
             "memory_context": [],
             "memory_trace": [{"operation": "lookup", "area_code": "NTINDA", "match_count": 0}],
             "guidance": guidance,
+            "latency_ms": round(duration_ms, 1),
             "trace": [
                 {
                     "iteration": 1,
@@ -222,11 +323,19 @@ def _simulate_bounded_agent(customer_message: str) -> dict:
         tool_res = execute_tool_call(
             "draft_ticket",
             {
-                "category": "water_leak",  # Valid category from tools.py enum
+                "category": "water_leak",
                 "priority": "high",
                 "summary": "Urgent water main pipe burst flooding roadway near Plot 14 Kololo",
                 "customer_area_code": "KOLOLO",
             },
+        )
+        # Store in supervisor review queue
+        _record_draft_ticket(
+            tool_res,
+            category="water_leak",
+            priority="high",
+            area="KOLOLO",
+            summary="Urgent water main pipe burst flooding roadway near Plot 14 Kololo",
         )
         # Store in working memory
         record = save_case({
@@ -260,6 +369,7 @@ def _simulate_bounded_agent(customer_message: str) -> dict:
             "memory_context": find_similar("KOLOLO", "water"),
             "memory_trace": [{"operation": "write", "draft_id": record["draft_id"]}],
             "guidance": guidance,
+            "latency_ms": round(duration_ms, 1),
             "trace": [
                 {
                     "iteration": 1,
@@ -304,6 +414,7 @@ def _simulate_bounded_agent(customer_message: str) -> dict:
             "memory_context": [],
             "memory_trace": [],
             "guidance": guidance,
+            "latency_ms": round(duration_ms, 1),
             "trace": [
                 {
                     "iteration": 1,
@@ -344,6 +455,7 @@ def _simulate_bounded_agent(customer_message: str) -> dict:
             "memory_context": [],
             "memory_trace": [],
             "guidance": guidance,
+            "latency_ms": round(duration_ms, 1),
             "trace": [
                 {
                     "iteration": 1,
@@ -386,6 +498,7 @@ def _simulate_bounded_agent(customer_message: str) -> dict:
         "memory_context": [],
         "memory_trace": [],
         "guidance": guidance,
+        "latency_ms": round(duration_ms, 1),
         "trace": [
             {
                 "iteration": 1,
@@ -410,31 +523,15 @@ def _simulate_bounded_agent(customer_message: str) -> dict:
 
 @app.post("/api/triage")
 def api_triage(req: TriageRequest) -> dict:
-    """Primary triage endpoint supporting live inference or deterministic presentation mode."""
+    """Primary triage endpoint supporting live inference or deterministic fallback."""
+    global LATEST_TELEMETRY
     if not req.message or not req.message.strip():
         raise HTTPException(status_code=400, detail="Message must not be empty")
 
     if req.demo_mode:
-        try:
-            return _simulate_bounded_agent(req.message)
-        except Exception as e:
-            grounding = build_grounding(req.message)
-            return {
-                "customer_message": req.message,
-                "classification_result": {"category": "service_request", "confidence": "high"},
-                "grounding_status": grounding.get("status", "grounded"),
-                "retrieved_sources": grounding.get("sources", []),
-                "tool_calls_made": [],
-                "tool_results": [],
-                "iteration_count": 1,
-                "requires_clarification": False,
-                "clarifying_question": None,
-                "stop_reason": "goal_achieved_grounded_guidance",
-                "memory_context": [],
-                "memory_trace": [],
-                "guidance": "Your utility request has been received and triaged according to standard operating procedures.",
-                "trace": [],
-            }
+        res = _simulate_bounded_agent(req.message)
+        LATEST_TELEMETRY = res
+        return res
 
     try:
         if req.use_bounded:
@@ -456,12 +553,20 @@ def api_triage(req: TriageRequest) -> dict:
                 "model_parsing_failure",
             }:
                 fallback = _simulate_bounded_agent(req.message)
+                LATEST_TELEMETRY = fallback
                 return {
                     "result": fallback,
                     "guidance": fallback.get("guidance"),
                     "warning": f"Notice: Live Gemini API experienced high demand ({stop_reason}). Triaged safely via local RAG & verified SOPs.",
                 }
 
+            # If live model executed draft_ticket, record in supervisor queue
+            if result.get("tool_results"):
+                for tr in result["tool_results"]:
+                    if tr.get("tool_name") == "draft_ticket" and tr.get("success"):
+                        _record_draft_ticket(tr.get("result", {}), summary=req.message)
+
+            LATEST_TELEMETRY = result
             return {
                 "result": result,
                 "guidance": guidance,
@@ -472,6 +577,7 @@ def api_triage(req: TriageRequest) -> dict:
 
     except Exception as e:
         fallback = _simulate_bounded_agent(req.message)
+        LATEST_TELEMETRY = fallback
         return {
             "result": fallback,
             "guidance": fallback.get("guidance"),

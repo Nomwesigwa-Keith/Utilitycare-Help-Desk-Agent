@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UtiliCare Supervisor Console | Operations & Dispatch</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-cyan-500 selection:text-white">
+
+  <!-- Supervisor Header -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Identity -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/20">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-base font-bold tracking-tight text-white">UtiliCare Operations Console</h1>
+            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800">
+              SAFETY GATE: ACTIVE (RULE B-01)
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">Help-Desk Supervisor Cockpit • Authorization & Dispatch Verification</p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center space-x-3">
+        <span class="hidden sm:inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-[11px] text-slate-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Operator: <strong>SUPERVISOR-4104</strong></span>
+        </span>
+        <button onclick="fetchPendingTickets()" title="Refresh Queue" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Dashboard Grid -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT COLUMN: Ticket Authorization Queue (5 Cols) -->
+    <section class="lg:col-span-5 flex flex-col space-y-4">
+      
+      <!-- Pending Queue Header Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+            <h2 class="text-sm font-bold text-white">Pending Approval Queue</h2>
+          </div>
+          <span id="pending-count-badge" class="px-2.5 py-0.5 rounded-full font-mono text-xs font-bold bg-amber-950 text-amber-300 border border-amber-800">
+            0 Drafts
+          </span>
+        </div>
+        <p class="text-xs text-slate-400 mt-1">
+          Tickets drafted by the AI triage engine. Technical field dispatch requires human sign-off.
+        </p>
+      </div>
+
+      <!-- Live Pending Tickets List Container -->
+      <div id="pending-tickets-container" class="space-y-3 flex-1 overflow-y-auto max-h-[480px]">
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 text-center text-xs text-slate-500">
+          <svg class="w-8 h-8 mx-auto text-slate-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <p class="font-medium text-slate-400">Queue is currently clear.</p>
+          <p class="mt-1 text-[11px]">When an urgent incident is reported by a customer, the draft will appear here for verification.</p>
+        </div>
+      </div>
+
+      <!-- Dispatched Audit History -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Recently Dispatched Tickets</h3>
+          <span class="text-[10px] text-slate-500 font-mono">Audit Log</span>
+        </div>
+        <div id="dispatched-history-list" class="space-y-2 max-h-[160px] overflow-y-auto text-xs">
+          <p class="text-slate-500 italic text-[11px]">No dispatched tickets in this session.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT COLUMN: AI Telemetry & Observability Inspector (7 Cols) -->
+    <section class="lg:col-span-7 flex flex-col space-y-4">
+      
+      <!-- Bounded Workflow Pipeline State Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Bounded Agent State Machine</h3>
+          </div>
+          <div class="flex items-center space-x-2 font-mono text-[11px]">
+            <span id="sup-iteration-badge" class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">Iteration: 0 / 3</span>
+            <span id="sup-latency-badge" class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-400">0.0 ms</span>
+          </div>
+        </div>
+
+        <!-- 5-Step Visualizer -->
+        <div class="grid grid-cols-5 gap-2 text-center text-xs">
+          <div id="sup-step-sense" class="workflow-step bg-slate-950 border border-slate-800 rounded-xl p-2.5 transition-all">
+            <div class="font-mono text-[10px] text-slate-500 uppercase">Step 1</div>
+            <div class="font-bold text-slate-300 mt-0.5">Sense</div>
+            <div class="text-[10px] text-slate-500 truncate mt-0.5">Ingest & RAG</div>
+          </div>
+
+          <div id="sup-step-plan" class="workflow-step bg-slate-950 border border-slate-800 rounded-xl p-2.5 transition-all">
+            <div class="font-mono text-[10px] text-slate-500 uppercase">Step 2</div>
+            <div class="font-bold text-slate-300 mt-0.5">Plan</div>
+            <div class="text-[10px] text-slate-500 truncate mt-0.5">Classify & Route</div>
+          </div>
+
+          <div id="sup-step-act" class="workflow-step bg-slate-950 border border-slate-800 rounded-xl p-2.5 transition-all">
+            <div class="font-mono text-[10px] text-slate-500 uppercase">Step 3</div>
+            <div class="font-bold text-slate-300 mt-0.5">Act</div>
+            <div class="text-[10px] text-slate-500 truncate mt-0.5">Tool Invocation</div>
+          </div>
+
+          <div id="sup-step-observe" class="workflow-step bg-slate-950 border border-slate-800 rounded-xl p-2.5 transition-all">
+            <div class="font-mono text-[10px] text-slate-500 uppercase">Step 4</div>
+            <div class="font-bold text-slate-300 mt-0.5">Observe</div>
+            <div class="text-[10px] text-slate-500 truncate mt-0.5">Validate Outputs</div>
+          </div>
+
+          <div id="sup-step-stop" class="workflow-step bg-slate-950 border border-slate-800 rounded-xl p-2.5 transition-all">
+            <div class="font-mono text-[10px] text-slate-500 uppercase">Step 5</div>
+            <div class="font-bold text-slate-300 mt-0.5">Stop / Exit</div>
+            <div class="text-[10px] text-slate-500 truncate mt-0.5">Bounded Exit</div>
+          </div>
+        </div>
+
+        <!-- Triage Summary Strip -->
+        <div class="mt-3 pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="flex items-center space-x-2">
+            <span class="text-slate-400">Classification:</span>
+            <span id="sup-category-badge" class="px-2 py-0.5 rounded-full font-semibold bg-slate-800 text-slate-400 border border-slate-700">None</span>
+            <span id="sup-confidence-badge" class="px-2 py-0.5 rounded-full font-semibold bg-slate-800 text-slate-400 border border-slate-700">Confidence: --</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-slate-400">Stop Reason:</span>
+            <span id="sup-stop-reason-badge" class="font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">idle</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabbed Evidence & Telemetry Inspector -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl flex-1 flex flex-col overflow-hidden shadow-xl">
+        
+        <!-- Tab Navigation -->
+        <div class="flex border-b border-slate-800 bg-slate-950/60 px-4 text-xs">
+          <button onclick="switchSupTab('rag')" id="sup-tab-btn-rag" class="py-3 px-3 font-semibold border-b-2 border-cyan-500 text-cyan-400 transition-colors">
+            RAG Grounding & Sources
+          </button>
+          <button onclick="switchSupTab('tools')" id="sup-tab-btn-tools" class="py-3 px-3 font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-colors">
+            Tool Authorizations
+          </button>
+          <button onclick="switchSupTab('memory')" id="sup-tab-btn-memory" class="py-3 px-3 font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-colors">
+            Working Memory (Isolated)
+          </button>
+          <button onclick="switchSupTab('trace')" id="sup-tab-btn-trace" class="py-3 px-3 font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-colors">
+            Execution Trace JSON
+          </button>
+        </div>
+
+        <!-- Tab Contents Container -->
+        <div class="p-4 flex-1 overflow-y-auto max-h-[360px] text-xs">
+          
+          <!-- TAB 1: RAG Grounding -->
+          <div id="sup-tab-content-rag" class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-slate-400 font-medium">Grounding Status:</span>
+              <span id="sup-rag-status-badge" class="px-2 py-0.5 rounded font-mono font-semibold bg-slate-800 text-slate-400">None</span>
+            </div>
+            <div id="sup-rag-sources-list" class="space-y-2">
+              <p class="text-slate-500 italic">No recent query telemetry.</p>
+            </div>
+          </div>
+
+          <!-- TAB 2: Tool Authorizations -->
+          <div id="sup-tab-content-tools" class="space-y-3 hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-slate-400 font-medium">Approved Catalogue:</span>
+              <div class="flex space-x-1.5 font-mono text-[11px]">
+                <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">get_outage_status</span>
+                <span class="px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">draft_ticket</span>
+              </div>
+            </div>
+            <div id="sup-tools-history-list" class="space-y-2">
+              <p class="text-slate-500 italic">No tools invoked recently.</p>
+            </div>
+          </div>
+
+          <!-- TAB 3: Working Memory -->
+          <div id="sup-tab-content-memory" class="space-y-3 hidden">
+            <div class="bg-cyan-950/30 border border-cyan-800/40 rounded-xl p-3 text-cyan-200">
+              <div class="flex items-center space-x-2 font-semibold">
+                <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                <span>Memory Boundary Rule M-02 (Strict Isolation)</span>
+              </div>
+              <p class="text-[11px] text-cyan-300/80 mt-1 leading-relaxed">
+                Case memory is advisory for human help-desk supervisors only. Historical records are <strong>NEVER</strong> injected into foundation model prompt inputs to prevent context pollution.
+              </p>
+            </div>
+            <div id="sup-memory-cases-list" class="space-y-2">
+              <p class="text-slate-500 italic">No historical case lookups recorded.</p>
+            </div>
+          </div>
+
+          <!-- TAB 4: Raw JSON Trace -->
+          <div id="sup-tab-content-trace" class="hidden">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-slate-400 font-mono text-[11px]">Latest Telemetry Execution Trace</span>
+              <button onclick="copySupTraceJSON()" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px]">Copy JSON</button>
+            </div>
+            <pre id="sup-trace-json-viewer" class="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-[11px] text-slate-300 overflow-x-auto max-h-[300px]">{}</pre>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="/static/supervisor.js?v=2.2"></script>
+</body>
+</html>

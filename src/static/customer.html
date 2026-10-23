@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UtiliCare Customer Support Portal | Electricity & Water</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-cyan-500 selection:text-white">
+
+  <!-- Customer Portal Header -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      
+      <!-- Logo & Identity -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-base font-bold tracking-tight text-white">UtiliCare Help Desk</h1>
+          <p class="text-xs text-slate-400">Customer Support Portal • Electricity & Water Services</p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center space-x-3">
+        <button onclick="resetCustomerChat()" title="Reset Chat" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Quick Scenario Helper Strip -->
+  <div class="bg-slate-900 border-b border-slate-800/80 px-4 py-2.5">
+    <div class="max-w-5xl mx-auto flex flex-wrap items-center gap-2 text-xs">
+      <span class="font-semibold text-slate-400 mr-1 flex items-center">
+        <svg class="w-3.5 h-3.5 mr-1 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Common Inquiries:
+      </span>
+      <button onclick="loadScenario('ntinda_outage')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-500/50 px-2.5 py-1 rounded-md transition flex items-center gap-1.5">
+        <span class="text-amber-400">⚡</span> Ntinda Outage Check
+      </button>
+      <button onclick="loadScenario('kololo_burst')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-500/50 px-2.5 py-1 rounded-md transition flex items-center gap-1.5">
+        <span class="text-blue-400">💧</span> Report Burst Water Pipe
+      </button>
+      <button onclick="loadScenario('high_bill')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-500/50 px-2.5 py-1 rounded-md transition flex items-center gap-1.5">
+        <span class="text-emerald-400">💰</span> High Water Bill Query
+      </button>
+      <button onclick="loadScenario('meter_leak')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-500/50 px-2.5 py-1 rounded-md transition flex items-center gap-1.5">
+        <span class="text-cyan-400">🔧</span> Leaking Meter Box
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Customer Chat Container -->
+  <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col">
+    
+    <div class="flex-1 flex flex-col bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl shadow-black/50">
+      
+      <!-- Portal Sub-Header -->
+      <div class="px-5 py-3 border-b border-slate-800 bg-slate-900/90 flex items-center justify-between text-xs text-slate-400">
+        <div class="flex items-center space-x-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span class="font-medium text-slate-200">Customer Assistant Online</span>
+        </div>
+        <span>Response Time: Immediate</span>
+      </div>
+
+      <!-- Messages Stream -->
+      <div id="customer-chat-messages" class="flex-1 p-5 space-y-4 overflow-y-auto min-h-[460px] max-h-[580px]">
+        
+        <!-- Welcome Greeting -->
+        <div class="flex items-start space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-cyan-600/30 border border-cyan-500/30 text-cyan-300 flex items-center justify-center flex-shrink-0 text-sm font-bold">
+            UC
+          </div>
+          <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl rounded-tl-none p-4 max-w-[85%] text-xs text-slate-200 leading-relaxed shadow-sm">
+            <p class="font-semibold text-white text-sm mb-1">Hello, welcome to UtiliCare Help Desk.</p>
+            <p class="text-slate-300">
+              I can help check active power outages, guide you on billing questions, or log repair requests for water leaks and electrical faults. 
+            </p>
+            <p class="mt-2 text-slate-400 text-[11px]">
+              How can we assist you today?
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Input Area -->
+      <div class="p-4 border-t border-slate-800 bg-slate-900/90">
+        <form id="customer-triage-form" onsubmit="submitCustomerInquiry(event)" class="space-y-3">
+          <div class="relative">
+            <textarea
+              id="customer-inquiry-input"
+              rows="3"
+              placeholder="Type your message here (e.g. 'Power is out in Ntinda since 8 AM' or 'Water pipe burst at Plot 14 Kololo')..."
+              class="w-full bg-slate-950 border border-slate-700 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 rounded-xl p-3.5 text-xs text-slate-100 placeholder-slate-500 resize-none outline-none transition"
+            ></textarea>
+          </div>
+          <div class="flex items-center justify-between">
+            <span id="customer-char-count" class="text-xs text-slate-500 font-mono">0 characters</span>
+            <div class="flex items-center space-x-2">
+              <button
+                type="button"
+                onclick="clearCustomerInput()"
+                class="px-3 py-1.5 text-xs text-slate-400 hover:text-white transition"
+              >
+                Clear
+              </button>
+              <button
+                type="submit"
+                id="customer-send-btn"
+                class="px-5 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-cyan-600/20 transition flex items-center space-x-1.5 disabled:opacity-50"
+              >
+                <span id="customer-send-text">Send Inquiry</span>
+                <svg id="customer-send-spinner" class="hidden w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="border-t border-slate-800/60 py-3 text-center text-xs text-slate-500">
+    UtiliCare Public Service • Protected under AI Safety Boundary Matrix Rule B-01
+  </footer>
+
+  <script src="/static/customer.js?v=2.2"></script>
+</body>
+</html>
