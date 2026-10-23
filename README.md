@@ -1,236 +1,269 @@
 # UtiliCare Help Desk Triage Agent
 
-UtiliCare is a bounded AI-assisted help-desk triage prototype for electricity and water service requests. A human help-desk agent remains responsible for ticket submission, routing, escalation, closure, billing changes, and infrastructure actions.
+UtiliCare is a bounded AI-assisted help-desk triage prototype for electricity and water service requests. It classifies customer messages, grounds responses in a controlled knowledge base, can call a small allow-listed set of tools, and returns results for human review.
 
-## Current Project Stage
+The system is intentionally designed with a human-in-the-loop boundary: an AI response does not submit, route, close, escalate, waive, or otherwise finalize a customer case automatically.
 
-**Week 8 - Final Release** (October 2026)
+- **Course:** BSE4104 Emerging Trends in Software Engineering, Makerere University
+- **Release:** Week 8 final release
+- **Repository:** [Nomwesigwa-Keith/Utilitycare-Help-Desk-Agent](https://github.com/Nomwesigwa-Keith/Utilitycare-Help-Desk-Agent)
+- **Team:** Group B — Nomwesigwa Keith, Mubiru Umar, Khot Adet Majuong, Nankunda Lilian, and Arok John Mayen
 
-This is the final release of the UtiliCare Help Desk Triage Agent, completing the 8-week capstone project for BSE4104 Emerging Trends in Software Engineering. The system implements:
+## Features
 
-- **Week 1-2**: Foundation model integration with structured classification
-- **Week 3**: Retrieval-augmented generation (RAG) with controlled corpus
-- **Week 4**: Tool function calling with authorization boundaries
-- **Week 5**: Bounded agent workflow with iteration limits and stop conditions
-- **Week 6**: Working memory for case history with strict isolation
-- **Week 7**: Comprehensive evaluation (37 scenarios), observability/tracing, guardrails, and failure remediation
+- Structured customer-message classification using Google Gemini.
+- Retrieval-augmented generation (RAG) over a controlled 30-document corpus.
+- Bounded agent execution with a maximum of three iterations.
+- Two explicitly allow-listed tools:
+  - `get_outage_status` — read-only outage lookup using simulated data.
+  - `draft_ticket` — creates a draft that remains pending human approval.
+- Working memory for case history with case isolation.
+- Customer Help-Desk Portal and Supervisor Operations Console.
+- Execution traces, telemetry, guardrails, and deterministic evaluation scenarios.
+- Explicit refusal of unsupported or unauthorized actions, including billing changes and infrastructure control.
 
-## Repository Structure
+## How a request is handled
+
+1. The API receives a free-text customer message.
+2. The RAG layer retrieves relevant guidance from the controlled knowledge base.
+3. The model classifies the request and produces structured guidance.
+4. The bounded workflow decides whether an approved tool is needed.
+5. Tool arguments and results are validated before they are used.
+6. The workflow stops on a completed response, clarification, failure, or the iteration limit.
+7. The result is returned to the customer portal and/or supervisor console for human review.
+
+## Scope and limitations
+
+- The outage data is mocked and is not a live utility feed.
+- Ticket drafting is local and simulated; it does not connect to a production ticketing system.
+- Retrieval uses lexical token overlap rather than a vector database or semantic embeddings.
+- The deterministic benchmark evaluates repeatable application behavior; it is not a measure of live model quality.
+- A valid Gemini API key is required for live model calls.
+- The application is a prototype and must not be used to make unsupervised operational, financial, or infrastructure decisions.
+
+## Repository structure
 
 ```text
 docs/
   requirements/       Project charter, user stories, AI boundary matrix, model note,
-                      tool catalogue, agent task contract, state model, memory design,
-                      MCP interface specification
+                      tool catalogue, agent contract, state model, and memory design
   architecture/       System architecture diagrams
-  weekly-reports/     Weekly progress reports (Weeks 1-7)
+  weekly-reports/     Weekly progress reports
   evaluation/         Evaluation methods, datasets, failure catalogue, and analysis
-prompts/              Versioned prompt specifications and change history
+  presentation/       Final presentation deck and supporting material
+  Final_Engineering_Report.pdf
+prompts/              Versioned prompt specification and change history
 knowledge/
-  corpus/             Controlled knowledge base (30 documents)
+  corpus/             Controlled knowledge base documents (KB-001 to KB-030)
   source_register.csv Corpus provenance and metadata
-src/                  Application source code
-  agent.py            Foundation model integration and parsing
-  bounded_agent.py    Bounded workflow with iteration limits
-  main.py             HTTP API endpoint
-  memory.py           Working memory for case history
-  orchestrator.py      Tool execution and validation
-  rag.py              Retrieval-augmented generation
-  tools.py            Tool implementations (get_outage_status, draft_ticket)
-tests/                Executable tests and evaluation scenarios
+src/
+  agent.py            Gemini integration, prompting, parsing, and validation
+  bounded_agent.py    Bounded workflow, state, limits, and execution traces
+  main.py             FastAPI application and HTTP routes
+  memory.py           Working-memory persistence and case isolation
+  orchestrator.py     Tool allow-list, argument validation, and execution
+  rag.py              Corpus loading, validation, chunking, and retrieval
+  tools.py             Simulated outage lookup and ticket-draft tools
+  static/             Customer and supervisor web interfaces
+tests/
+  Unit tests, contract tests, evaluation runners, and scenario data
 evidence/
   traces/             Evaluation and runtime traces
   screenshots/        Demonstration screenshots
   demo/               Demonstration assets
 data/                 Runtime data (gitignored)
-  case_memory.json    Working memory storage
 ```
 
-**Important**: The `data/` directory and `.env` file are gitignored. Never commit secrets or runtime data.
+The `.env` file and `data/` directory are intentionally excluded from version control. Never commit API keys, case-memory data, or other secrets.
 
-## Quick Start
+## Quick start
 
 ### Prerequisites
 
-- Python 3.10 or higher
-- pip package manager
-- A Google Gemini API key (free tier available)
-- For pytest-based checks, install pytest separately: `python -m pip install pytest`
+- Python 3.10 or newer
+- `pip`
+- A Google Gemini API key for live model calls
 
-### Installation
+### Windows PowerShell
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Nomwesigwa-Keith/Utilitycare-Help-Desk-Agent.git
-   cd Utilitycare-Help-Desk-Agent
-   ```
+```powershell
+git clone https://github.com/Nomwesigwa-Keith/Utilitycare-Help-Desk-Agent.git
+cd Utilitycare-Help-Desk-Agent
 
-2. **Create a Python virtual environment:**
-   ```bash
-   python -m venv venv
-   # On Windows PowerShell:
-   .\venv\Scripts\Activate.ps1
-   # On Windows Command Prompt:
-   venv\Scripts\activate.bat
-   # On Linux/Mac:
-   source venv/bin/activate
-   ```
+python -m venv .venv
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
 
-3. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+python -m pip install -r requirements.txt
+Copy-Item .env.example .env
+```
 
-4. **Configure environment variables** (PowerShell):
-   ```bash
-   Copy-Item .env.example .env
-   # Edit .env and add your GEMINI_API_KEY
-   ```
-   On macOS/Linux, use `cp .env.example .env` instead. Keep the populated `.env` file private.
+Open `.env` and set a real `GEMINI_API_KEY`:
 
-5. **Run the API & Decoupled Web Applications:**
-   ```bash
-   uvicorn src.main:app --reload
-   ```
+```env
+GEMINI_API_KEY=your-gemini-api-key
+UTILICARE_MODEL=models/gemini-flash-latest
+```
 
-   Once running, access the decoupled web portals directly in your browser:
-   - **Customer Help-Desk Portal (Public Chat):** [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
-   - **Supervisor Operations Console (Approval Cockpit):** [http://127.0.0.1:8000/supervisor](http://127.0.0.1:8000/supervisor)
+Start the application:
 
-6. **Test the HTTP Endpoint directly:**
-   ```bash
-   curl -X POST http://127.0.0.1:8000/triage \
-       -H "Content-Type: application/json" \
-       -d '{"message": "My power has been out since last night in Ntinda."}'
-   ```
+```powershell
+python -m uvicorn src.main:app --reload
+```
 
-### Running the Bounded Agent Directly
+### macOS or Linux
 
-For testing without the HTTP API:
+```bash
+git clone https://github.com/Nomwesigwa-Keith/Utilitycare-Help-Desk-Agent.git
+cd Utilitycare-Help-Desk-Agent
+
+python3 -m venv .venv
+source .venv/bin/activate
+
+python -m pip install -r requirements.txt
+cp .env.example .env
+```
+
+Set `GEMINI_API_KEY` in `.env`, then start the application:
+
+```bash
+python -m uvicorn src.main:app --reload
+```
+
+## Demo portals
+
+With the server running, open:
+
+| Portal | URL | Purpose |
+|---|---|---|
+| Customer Help-Desk Portal | [http://127.0.0.1:8000/](http://127.0.0.1:8000/) | Submit and review customer triage requests |
+| Supervisor Operations Console | [http://127.0.0.1:8000/supervisor](http://127.0.0.1:8000/supervisor) | Review draft tickets, approve dispatch, and inspect telemetry |
+| Health check | [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health) | Confirm that the API is running |
+| Interactive API documentation | [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) | Explore the OpenAPI endpoints |
+
+Suggested demonstration scenarios:
+
+1. **Ntinda power outage** — demonstrates RAG grounding and the read-only outage tool.
+2. **Kololo water burst** — demonstrates ticket drafting and human approval.
+3. **Bill waiver injection** — demonstrates prompt-injection defense and authorization boundaries.
+4. **High water bill dispute** — demonstrates grounded guidance without a side-effecting tool.
+5. **Ambiguous request** — demonstrates clarification handling.
+
+## API examples
+
+### PowerShell
+
+```powershell
+Invoke-RestMethod `
+  -Uri http://127.0.0.1:8000/triage `
+  -Method Post `
+  -ContentType "application/json" `
+  -Body '{"message":"My power has been out since last night in Ntinda.","demo_mode":true}'
+```
+
+### macOS/Linux
+
+```bash
+curl -X POST http://127.0.0.1:8000/triage \
+  -H "Content-Type: application/json" \
+  -d '{"message":"My power has been out since last night in Ntinda.","demo_mode":true}'
+```
+
+Useful read-only routes include:
+
+```text
+GET  /health
+GET  /api/scenarios
+GET  /api/eval-summary
+GET  /api/tickets/pending
+GET  /api/telemetry/latest
+```
+
+## Running the agent without the API
+
+Run the bounded-agent smoke test directly:
 
 ```bash
 python -m src.bounded_agent
 ```
 
-This runs a smoke test with a sample message and prints the full state including the execution trace.
+It prints the resulting state and execution trace for a sample request.
 
-### Running Test & Evaluation Suites
+## Tests and evaluations
 
-**1. Automated Unit Test Suite (pytest):**
+Install the test runner if it is not already available:
+
+```bash
+python -m pip install pytest
+```
+
+Run the automated test suite:
+
 ```bash
 python -m pytest
 ```
-Runs 13/13 passing contract, tool, bounded agent, and working memory tests.
 
-**2. 37-Scenario Deterministic Extended Benchmark:**
-```bash
-python -m tests.run_extended_eval
-```
-Covers normal, edge, incorrect-information, adversarial, tool-failure, and unauthorized-action cases. Results written to `evidence/traces/`.
+Run the working-memory tests:
 
-**Tool Authorization Tests:**
-```bash
-python -m tests.test_failure_authorization
-```
-Tests boundary conditions and unauthorized action prevention.
-
-**Working Memory Tests** (after installing pytest as noted above):
 ```bash
 python -m pytest tests/test_week6_working_memory.py
 ```
-Verifies memory persistence and decision isolation.
 
-## Capstone Deliverables & Task Assignment (Week 8)
+Run the deterministic 37-scenario benchmark:
 
-The Week 8 final release represents coordinated engineering across all team members, structured according to our official project brief:
+```bash
+python -m tests.run_extended_eval
+```
 
-| Deliverable | Requirements | Assignee / Member | Primary Evidence & Location |
-| :--- | :--- | :--- | :--- |
-| **Final tagged release and README/run instructions** | Fix critical defects, document known limitations, tag a release, and make it runnable from a clean clone | **Umar** (Mubiru Umar) | Git tag `v1.0.0`; clean-clone instructions in `README.md`; `src/main.py` fixes. |
-| **Final engineering report (8-12 pages, excluding appendices)** | Ten sections from the brief's template, plus references and appendices | **Everyone** (All 5 Team Members) | [`docs/UtiliCare_Final_Engineering_Report.docx`](docs/UtiliCare_Final_Engineering_Report.docx) |
-| **Final evaluation/evidence pack** | Evaluation results, traces, the Failure Catalogue, and screenshots | **Lilian** (Nankunda Lilian) | [`evidence/FINAL_EVALUATION_REPORT.md`](evidence/FINAL_EVALUATION_REPORT.md); `evidence/traces/`; Failure Catalogue. |
-| **Presentation deck and live demonstration** | 12-15 minutes, built around a real demo | **Arok & Khot** (Arok John Mayen & Khot Adet Majuong) | [`docs/presentation/UtiliCare_Final_Presentation_Deck.pptx`](docs/presentation/UtiliCare_Final_Presentation_Deck.pptx); [`FINAL_PRESENTATION_DECK.md`](docs/presentation/FINAL_PRESENTATION_DECK.md); decoupled Web UI. |
-| **Completed ClickUp board and repository evidence** | Tasks closed and linked to PRs and commits | **Keith** (Nomwesigwa Keith) | ClickUp Sprint Board; merge commit `5917465`; PR management. |
+Run the tool-authorization tests:
 
-## Project Evidence Directory
+```bash
+python -m tests.test_failure_authorization
+```
 
-| Week | Deliverable | Location |
-|------|-------------|----------|
-| 1 | Project charter, user stories, AI boundary matrix | `docs/requirements/` |
-| 1 | Initial architecture diagram | `docs/architecture/` |
-| 1-8 | Weekly progress reports (Weeks 1 to 8) | `docs/weekly-reports/` |
-| 2 | Model selection note | `docs/requirements/Model_Selection_Note.docx` |
-| 2 | Prompt specification and version history | `prompts/` |
-| 3 | RAG evaluation and failure catalogue | `docs/evaluation/Week3_RAG_Evaluation_and_Failure_Catalogue.md` |
-| 4 | Tool authorization test evidence | `docs/evaluation/Week4_Failure_Authorization_Test_Evidence.md` |
-| 5 | Agent task contract | `docs/requirements/Agent_Task_Contract for week 5.docx` |
-| 5 | Execution trace evidence | `docs/evaluation/Week5_Execution_Trace_Evidence.md` |
-| 6 | State model | `docs/requirements/Week6_Workflow_State_Model.docx` |
-| 6 | Memory design and data handling | `docs/requirements/Memory_Design_and_Data_Handling_Note.docx` |
-| 6 | Working memory evidence | `docs/evaluation/Week6_Working_Memory_Evidence.md` |
-| 7 | 37-scenario evaluation benchmark | `docs/evaluation/Week 7_37scenario_evaluation.md` |
-| 7 | Observability/tracing evidence | `docs/evaluation/Week7_Observability_Tracing_Evidence.md` |
-| 7 | Guardrail evidence | `evidence/week7_guardrail_evidence.md` |
-| 7 | Failure catalogue & remediation | `docs/evaluation/Failure_Catalogue_and_Remediation_Evidence.md` |
-| 8 | Final Engineering Report (10 Sections) | `docs/UtiliCare_Final_Engineering_Report.docx` |
-| 8 | Final Evaluation & Evidence Pack | `evidence/FINAL_EVALUATION_REPORT.md` |
-| 8 | Presentation Deck & Live Demo Script | `docs/presentation/` |
-| 8 | Week 8 Progress Report | `docs/weekly-reports/Week8_Progress_Report.docx` |
+Run the RAG evaluation:
 
-## Known Limitations
+```bash
+python -m tests.run_rag_eval
+```
 
-### API Stability
-- The system uses the deprecated `google-generativeai` Python SDK and the configurable `models/gemini-flash-latest` alias. Provider SDK and model behavior may change; migrate to the supported SDK and pin a model before production use.
+Evaluation output and execution traces are written under `evidence/traces/`.
 
-### Rate Limiting
-- The free tier of Gemini API has rate limits. The client waits 2 seconds between model calls and retries selected transient errors, but this does not guarantee quota availability.
-- Under high load, you may encounter 429 (quota exceeded) or 503 (service unavailable) errors.
+## Safety boundaries
 
-### Memory Storage
-- Working memory is stored locally in `data/case_memory.json` and is not backed up.
-- Records expire after 30 days and are capped at 100 entries.
-- Memory is advisory only for human operators and does not influence model decisions.
+- Maximum of **three agent iterations** per request.
+- Only `get_outage_status` and `draft_ticket` are allow-listed.
+- Ticket drafts remain `pending_approval` until a human supervisor acts.
+- No billing, payment, financial-waiver, infrastructure-control, or automatic-closure tools are available.
+- Model output is untrusted and must pass schema and authorization validation.
+- Insufficient evidence is reported explicitly rather than being filled from model memory.
+- Working memory is advisory and isolated by case; it is not used as an unrestricted model knowledge source.
 
-### Model Truncation
-- In rare cases, the model may hit token limits and truncate responses. The system handles this gracefully by recording `model_parsing_failure` and stopping safely.
+## Configuration
 
-### Error Handling
-- The system handles errors at multiple levels (HTTP, orchestrator, bounded agent) but certain edge cases may still cause unexpected behavior.
-- Error details appear in returned traces where available; this prototype does not provide centralized or durable logging.
+| Variable | Purpose | Default |
+|---|---|---|
+| `GEMINI_API_KEY` | Google Gemini API credential | None; required for live calls |
+| `UTILICARE_MODEL` | Gemini model identifier | `models/gemini-flash-latest` |
 
-## Failure Remediation
+## Evidence and documentation
 
-Six critical failures were identified and remediated during Week 7:
+- [Final engineering report](docs/Final_Engineering_Report.pdf)
+- [Evaluation report](evidence/FINAL_EVALUATION_REPORT.md)
+- [Failure catalogue and remediation evidence](docs/evaluation/Failure_Catalogue_and_Remediation_Evidence.md)
+- [Week 7 scenario evaluation](docs/evaluation/Week%207_37scenario_evaluation.md)
+- [Prompt specification](prompts/prompt_spec.md)
+- [Prompt changelog](prompts/CHANGELOG.md)
+- [Presentation deck](docs/presentation/FINAL_PRESENTATION_DECK.md)
 
-| Failure ID | Description | Status |
-|------------|-------------|--------|
-| FC-02 | Tool area code whitespace & casing mismatch | ✅ Fixed |
-| FC-04 | Unauthorized ticket status bypass | ✅ Fixed |
-| FC-05 | Model JSON truncation & parse failure | ✅ Fixed |
-| FC-07 | Working memory context leakage into LLM | ✅ Fixed |
-| FC-08 | Unbounded agent loop on ambiguous inputs | ✅ Fixed |
-| FC-10 | Empty/whitespace-only request crashing pipeline | ✅ Fixed |
+## Stopping the demo
 
-The failure catalogue records the evidence for these remediations. Re-run the offline evaluation and relevant checks on the release commit; results depend on the local Python environment. See `docs/evaluation/Failure_Catalogue_and_Remediation_Evidence.md` for details.
+Return to the terminal running Uvicorn and press:
 
-## System Architecture
+```text
+Ctrl+C
+```
 
-The agent follows a bounded workflow:
+## License and academic use
 
-1. **Sense**: Retrieve customer message and knowledge base context via RAG
-2. **Plan**: Classify issue and determine if tools are needed
-3. **Act**: Execute approved tools (get_outage_status, draft_ticket)
-4. **Observe**: Analyze tool results and determine next action
-5. **Stop/Re-plan**: Stop on success, failure, or iteration limit (max 3)
-
-Key safety boundaries:
-- Maximum 3 iterations per request
-- Tool allow-list (only get_outage_status and draft_ticket)
-- Human approval required for ticket submission
-- No autonomous infrastructure control
-- No billing or financial decisions
-- Memory context never influences model decisions
-
-## License
-
-This is an academic project for BSE4104 Emerging Trends in Software Engineering at Makerere University.
+This repository was developed as an academic capstone prototype. Review the project and course requirements before using any component in a production utility-service environment.
