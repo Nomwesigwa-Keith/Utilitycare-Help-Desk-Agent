@@ -88,12 +88,16 @@ data/                 Runtime data (gitignored)
    ```
    On macOS/Linux, use `cp .env.example .env` instead. Keep the populated `.env` file private.
 
-5. **Run the API server:**
+5. **Run the API & Decoupled Web Applications:**
    ```bash
    uvicorn src.main:app --reload
    ```
 
-6. **Test the endpoint:**
+   Once running, access the decoupled web portals directly in your browser:
+   - **Customer Help-Desk Portal (Public Chat):** [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+   - **Supervisor Operations Console (Approval Cockpit):** [http://127.0.0.1:8000/supervisor](http://127.0.0.1:8000/supervisor)
+
+6. **Test the HTTP Endpoint directly:**
    ```bash
    curl -X POST http://127.0.0.1:8000/triage \
        -H "Content-Type: application/json" \
@@ -110,9 +114,15 @@ python -m src.bounded_agent
 
 This runs a smoke test with a sample message and prints the full state including the execution trace.
 
-### Running Evaluations
+### Running Test & Evaluation Suites
 
-**37-Scenario Extended Evaluation:**
+**1. Automated Unit Test Suite (pytest):**
+```bash
+python -m pytest
+```
+Runs 13/13 passing contract, tool, bounded agent, and working memory tests.
+
+**2. 37-Scenario Deterministic Extended Benchmark:**
 ```bash
 python -m tests.run_extended_eval
 ```
@@ -130,13 +140,25 @@ python -m pytest tests/test_week6_working_memory.py
 ```
 Verifies memory persistence and decision isolation.
 
-## Project Evidence
+## Capstone Deliverables & Task Assignment (Week 8)
+
+The Week 8 final release represents coordinated engineering across all team members, structured according to our official project brief:
+
+| Deliverable | Requirements | Assignee / Member | Primary Evidence & Location |
+| :--- | :--- | :--- | :--- |
+| **Final tagged release and README/run instructions** | Fix critical defects, document known limitations, tag a release, and make it runnable from a clean clone | **Umar** (Mubiru Umar) | Git tag `v1.0.0`; clean-clone instructions in `README.md`; `src/main.py` fixes. |
+| **Final engineering report (8-12 pages, excluding appendices)** | Ten sections from the brief's template, plus references and appendices | **Everyone** (All 5 Team Members) | [`docs/UtiliCare_Final_Engineering_Report.docx`](docs/UtiliCare_Final_Engineering_Report.docx) |
+| **Final evaluation/evidence pack** | Evaluation results, traces, the Failure Catalogue, and screenshots | **Lilian** (Nankunda Lilian) | [`evidence/FINAL_EVALUATION_REPORT.md`](evidence/FINAL_EVALUATION_REPORT.md); `evidence/traces/`; Failure Catalogue. |
+| **Presentation deck and live demonstration** | 12-15 minutes, built around a real demo | **Arok & Khot** (Arok John Mayen & Khot Adet Majuong) | [`docs/presentation/UtiliCare_Final_Presentation_Deck.pptx`](docs/presentation/UtiliCare_Final_Presentation_Deck.pptx); [`FINAL_PRESENTATION_DECK.md`](docs/presentation/FINAL_PRESENTATION_DECK.md); decoupled Web UI. |
+| **Completed ClickUp board and repository evidence** | Tasks closed and linked to PRs and commits | **Keith** (Nomwesigwa Keith) | ClickUp Sprint Board; merge commit `5917465`; PR management. |
+
+## Project Evidence Directory
 
 | Week | Deliverable | Location |
 |------|-------------|----------|
 | 1 | Project charter, user stories, AI boundary matrix | `docs/requirements/` |
 | 1 | Initial architecture diagram | `docs/architecture/` |
-| 1-7 | Weekly progress reports | `docs/weekly-reports/` |
+| 1-8 | Weekly progress reports (Weeks 1 to 8) | `docs/weekly-reports/` |
 | 2 | Model selection note | `docs/requirements/Model_Selection_Note.docx` |
 | 2 | Prompt specification and version history | `prompts/` |
 | 3 | RAG evaluation and failure catalogue | `docs/evaluation/Week3_RAG_Evaluation_and_Failure_Catalogue.md` |
@@ -146,10 +168,14 @@ Verifies memory persistence and decision isolation.
 | 6 | State model | `docs/requirements/Week6_Workflow_State_Model.docx` |
 | 6 | Memory design and data handling | `docs/requirements/Memory_Design_and_Data_Handling_Note.docx` |
 | 6 | Working memory evidence | `docs/evaluation/Week6_Working_Memory_Evidence.md` |
-| 7 | 37-scenario evaluation | `docs/evaluation/Week 7_37scenario_evaluation.md` |
+| 7 | 37-scenario evaluation benchmark | `docs/evaluation/Week 7_37scenario_evaluation.md` |
 | 7 | Observability/tracing evidence | `docs/evaluation/Week7_Observability_Tracing_Evidence.md` |
 | 7 | Guardrail evidence | `evidence/week7_guardrail_evidence.md` |
-| 7 | Failure catalogue | `docs/evaluation/Failure_Catalogue_and_Remediation_Evidence.md` |
+| 7 | Failure catalogue & remediation | `docs/evaluation/Failure_Catalogue_and_Remediation_Evidence.md` |
+| 8 | Final Engineering Report (10 Sections) | `docs/UtiliCare_Final_Engineering_Report.docx` |
+| 8 | Final Evaluation & Evidence Pack | `evidence/FINAL_EVALUATION_REPORT.md` |
+| 8 | Presentation Deck & Live Demo Script | `docs/presentation/` |
+| 8 | Week 8 Progress Report | `docs/weekly-reports/Week8_Progress_Report.docx` |
 
 ## Known Limitations
 

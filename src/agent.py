@@ -27,7 +27,7 @@ from src.orchestrator import get_tool_schema, parse_tool_calls, execute_tool_cal
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 # Model ID for Gemini
-MODEL_ID = os.environ.get("UTILICARE_MODEL", "models/gemini-flash-latest")
+MODEL_ID = os.environ.get("UTILICARE_MODEL", "gemini-flash-lite-latest")
 # Retries only transient provider failures. Authentication, validation and other
 # client errors must fail immediately rather than being retried.
 TRANSIENT_RETRY = Retry(
